@@ -1,5 +1,7 @@
 # Banking Application
 
+Group 1 -- Avocado Toast
+
 ## Team members
 
 - Flaviu Tamas -- flaviut
