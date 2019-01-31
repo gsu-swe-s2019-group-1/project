@@ -1,24 +1,24 @@
-# Resumes
+## Resumes
 
-## Damh Pham
+### Damh Pham
 
-### Classes Taken
+#### Classes Taken
 
 - Data Structures
 - System-level Programming
 - Math Models
 
-### Technologies
+#### Technologies
 
 - Languages: Java, C, Python
 
-### Experience
+#### Experience
 
 None
 
-## Anandita Dubey
+### Anandita Dubey
 
-### Courses Taken
+#### Courses Taken
 
 - Data structures
 - Computational Intelligence
@@ -26,18 +26,18 @@ None
 - Intro to Machine Learning
 - Operating System
 
-### Technologies
+#### Technologies
 
 - Languages: Java
 - Skills: Android Studio, Neural Networks
 
-### Experience
+#### Experience
 
 None
 
-## Flaviu Tamas
+### Flaviu Tamas
 
-### Classes taken
+#### Classes taken
 
 - Data structures
 - Computer organization
@@ -46,13 +46,13 @@ None
 - Computer architecture
 - Parallel & distributed programming
 
-### Technologies
+#### Technologies
 
 - Languages: JavaScript, HTML, Java, Scala, CSS, C, Bash, SQL, Nim
 - Libraries: Backbone.js, Underscore.js, React, Django, PCRE
 - Other: Git, PTC Integrity, RST, SOAP, LATEX, Bugzilla, Wercker, Gitlab CI, Docker
 
-### Experience
+#### Experience
 
 At my previous job I worked on doing web development on embedded systems, and
 worked on basically everything, [from the front-end
@@ -64,36 +64,36 @@ backend, and Javascript/Typescript/Backbone/React on the frontend.
 My current job is doing devops, as well as a bit of embedded programming, for
 GTRI. I've mostly been using Python, as well as a decent amount of bash & C++.
 
-## Carlos Deleon
+### Carlos Deleon
 
-### Courses Taken
+#### Courses Taken
 
 - Data Structures
 - Computer Architecture
 - System Level
 - Programming language concepts
 
-### Technologies
+#### Technologies
 
 - Languages: Java, C, Assembly, HTML, CSS
 
-### Experience
+#### Experience
 
 None
 
-## Alex Petros
+### Alex Petros
 
-### Classes Taken
+#### Classes Taken
 
 - Data Structures
 - Computer Organizations
 - System-level Programming
 - Windowing Systems
 
-### Technologies
+#### Technologies
 
 - Languages: Java, C, Bash, SQL
 
-### Experience
+#### Experience
 
 None
