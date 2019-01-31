@@ -2,8 +2,8 @@
 
 ## Team members
 
-- Flaviu Tamas
-- Anandita Dubey
-- Danh Pham
-- Alex Petros
-- Carlos Deleon
+- Flaviu Tamas -- flaviut
+- Anandita Dubey -- demo123git
+- Danh Pham -- nessico
+- Alex Petros -- apetros1
+- Carlos Deleon -- cdele
