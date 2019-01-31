@@ -2,48 +2,48 @@
 
 ### What is your product, on a high level?
 
-Our product, an online banking application will allow the customers of a bank
-or any other financial institution to perform the range of operations remotely
-without explicitly visiting the bank, basically managing their money online. It
-will allow the customers to open their accounts, manage them electronically, to
-monitor them, to make transactions, paying their bills, transfer their money,
-making deposits, etc.
+Our product is an online banking application, which will allow the customers of
+a bank or other another financial institution to perform money-management
+without physically visiting the bank.
+
+It will allow the customers to open their accounts, manage them electronically,
+to monitor them, to make transactions, pay their bills, transfer money, make
+deposits, and so on.
 
 ### Whom is it for?
 
-An online banking application is any way beneficial to everyone but, it would
-prove to be advantageous for the people with stringent work schedule. This
-application will allow them to manage their activities of the bank
-conveniently. It will definitely help them to manage their accounts and keep
-track of their activities in a quick manner with minimal costs without any need
-to visit the banks or making any call.
+An online banking application is beneficial to everyone but is especially
+useful for those people with a stringent work schedule. It will help them to
+manage their accounts and keep track of their activities in a quick manner with
+minimal costs without the need to to visit a physical bank during working hours
+or make a phone call.
 
 ### What problem does it solve?
 
- - 24/7 availability: Saving the customer from rushing the banks during
-   their(bank’s) working hours. With online banking system, people can perform
-   their tasks during the time that suit their work schedule.
+ - 24/7 availability, saving the customer from rushing the banks during working
+   hours. With an online banking system, people can perform their tasks at a
+   time that suits their work schedule.
 
- - Stringent schedule problem: Providing customers with strict working hours
+ - Stringent schedules, where customers with strict working hours
    to perform their banking activities effectively and conveniently.
 
- - Everything available on a single page: In spite of visiting different
-   officials of the bank specialized in different tasks, an online banking
-   application will provide with the flexibility to do various tasks in a
-   single click present right away over the screen. There might be the
-   possibility of unavailability of the bank official, hence rushing to the
-   bank again to get work done. In this context too, it will benefit the
-   customers to the great extent.
+ - Centralized source of information, where instead of visiting different
+   officials specialized in different tasks, the customer can use an online
+   banking application flexible enough to do any task in a single click. Human
+   bankers are not always availible, but the application always will be,
+   meaning there is no need to rush to the bank to get things done.
 
  - Remain informed: With the online banking system, customers can easily
-   receive information regarding their upcoming deadlines or dues through app
-   notifications, mails or text messages.
+   receive up-to-date information regarding their upcoming deadlines or dues
+   through notifications, emails, or text messages.
 
- - Meeting deadlines: No need to rush to the bank and to meet the deadlines at
-   home instead.
+ - Easy bill payments, so that there is no need to rush to the bank. Everything
+   can be done at home instead.
 
 ### What alternatives are available?
 
- - Services provided by 3rd party application
- - Any mobile application
- - In person services
+ - Services provided by 3rd party application, like Mint
+ - A phone app
+ - In person banking services
+ - Phone calls
+ - ATMs
