@@ -1,0 +1,8 @@
+ID,Name,Actors,Description,Alternate path,Pre-condition
+1,Register customer,Banker,"Add a new customer, with their own username and password",None,Logged in
+2,Deposit cash,Banker,"Take a certain amount of cash from the customer, adding the amount to their balance",None,Logged in
+3,Withdraw cash,Banker,"Give the customer a certain amount of cash, subtracting the amount from their balance",None,"Logged in, account has sufficient balance"
+4,View ledger,"Banker, Customer","View a list of all the transactions in the account, as well as the overall account balance",None,Logged in
+5,Pay bill,Customer,Send someone else money electronically through the website,None,"Logged in, account has sufficient balance"
+6,View transaction volume,Analyst,"View the amount of money that was deposited and withdrawn in a single day, for the entire bank",Manual SQL access,Logged in
+7,Log in,"Banker, Customer, Analyst",Authenticate themselves to the system,None,None
