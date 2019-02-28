@@ -1,0 +1,223 @@
+# open this file up in https://editor.swagger.io/
+# to read the documentation
+# You can also generate code implementing this API using the buttons at the top
+openapi: "3.0.1"
+info:
+  description: "A banking application API"
+  version: "1.0.0"
+  title: "Avocado Toast"
+servers:
+  - url: https://avocado-toast.wp6.pw/api
+tags:
+- name: "user"
+  description: "Operations involving users"
+- name: "transaction"
+  description: "Money transactions"
+paths:
+  /user:
+    post:
+      tags:
+      - "user"
+      summary: "Create user"
+      description: "This can only be done by the logged in banker."
+      operationId: "createUser"
+      requestBody:
+        description: "Created user object"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        default:
+          description: "successful operation"
+    get:
+      tags:
+      - "user"
+      summary: "get a list of all availible users"
+      description: ""
+      operationId: "getUserList"
+      parameters:
+      - name: "accountType"
+        in: "query"
+        description: "the type of user account to look up"
+        required: true
+        schema:
+          $ref: '#/components/schemas/AccountType'
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/User"
+  /user/login:
+    get:
+      tags:
+      - "user"
+      summary: "Logs user into the system"
+      description: ""
+      operationId: "loginUser"
+      parameters:
+      - name: "username"
+        in: "query"
+        description: "The user name for login"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "string"
+      - name: "password"
+        in: "query"
+        description: "The password for login in clear text"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: "string"
+        400:
+          description: "Invalid username/password supplied"
+  /ledger/by-user/{userId}:
+    post:
+      tags:
+        - "transaction"
+        - "user"
+      summary: "Submit a new transaction for the user"
+      operationId: "createUserTransaction"
+      parameters:
+      - in: "path"
+        name: "userId"
+        description: "ID of a valid user"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+      requestBody:
+        description: "Created user object"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                merchant:
+                  type: "string"
+                amount:
+                  type: "number"
+      responses:
+        default:
+          description: "Transaction successfully submitted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LedgerEntry"
+        400:
+          description: "Insufficent funds"
+    get:
+      tags:
+      - "user"
+      - "transaction"
+      summary: "Gets a list of transactions & an overall balance for a user"
+      operationId: "getUserTransactions"
+      parameters:
+      - in: "path"
+        schema:
+          type: "integer"
+          format: "int64"
+        name: "userId"
+        description: "ID of a valid user"
+        required: true
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  balance:
+                    type: "number"
+                  transactions:
+                    description: "List of transactions in order from most recent to least recent"
+                    type: "array"
+                    items:
+                      "$ref": "#/components/schemas/LedgerEntry"
+  /ledger/by-date/{date}:
+    get:
+      tags:
+      - "user"
+      - "transaction"
+      summary: "Gets a list of transactions & overall cashflow for the bank on the given date"
+      operationId: "getDayTransactions"
+      parameters:
+      - in: "path"
+        schema:
+          type: "string"
+          format: "date"
+        name: "date"
+        description: "Day to get transactions for"
+        required: true
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  cashFlow:
+                    description: "Sum of the value of all the transactions on the given date"
+                    type: "number"
+                  transactions:
+                    description: "List of transactions in order from most recent to least recent"
+                    type: "array"
+                    items:
+                      "$ref": "#/components/schemas/LedgerEntry"
+components:
+  schemas:
+    LedgerEntry:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        userId:
+          type: "integer"
+          format: "int64"
+        merchant:
+          type: "string"
+        dateTime:
+          type: "string"
+          format: "date-time"
+    AccountType:
+      type: "string"
+      enum:
+        - "banker"
+        - "customer"
+        - "analysist"
+    User:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        username:
+          type: "string"
+        password:
+          type: "string"
+          format: "password"
+        ssn:
+          type: "string"
+        accountType:
+          $ref: '#/components/schemas/AccountType'
