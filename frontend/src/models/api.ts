@@ -152,7 +152,7 @@ export class Client {
     /**
      * Submit a new transaction for the user
      * @param userId ID of a valid user
-     * @param body Created user object
+     * @param body Created transaction object
      * @return Transaction successfully submitted
      */
     createUserTransaction(userId: number, body: Body): Promise<LedgerEntry> {
@@ -200,7 +200,7 @@ export class Client {
      * @param userId ID of a valid user
      * @return successful operation
      */
-    getUserTransactions(userId: number): Promise<Anonymous> {
+    getUserTransactions(userId: number): Promise<UserTransactions> {
         let url_ = this.baseUrl + "/ledger/by-user/{userId}";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined.");
@@ -219,14 +219,14 @@ export class Client {
         });
     }
 
-    protected processGetUserTransactions(response: Response): Promise<Anonymous> {
+    protected processGetUserTransactions(response: Response): Promise<UserTransactions> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? Anonymous.fromJS(resultData200) : new Anonymous();
+            result200 = resultData200 ? UserTransactions.fromJS(resultData200) : new UserTransactions();
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -234,7 +234,7 @@ export class Client {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Anonymous>(<any>null);
+        return Promise.resolve<UserTransactions>(<any>null);
     }
 
     /**
@@ -242,7 +242,7 @@ export class Client {
      * @param date Day to get transactions for
      * @return successful operation
      */
-    getDayTransactions(date: Date): Promise<Anonymous2> {
+    getDayTransactions(date: Date): Promise<DailyTransactions> {
         let url_ = this.baseUrl + "/ledger/by-date/{date}";
         if (date === undefined || date === null)
             throw new Error("The parameter 'date' must be defined.");
@@ -261,14 +261,14 @@ export class Client {
         });
     }
 
-    protected processGetDayTransactions(response: Response): Promise<Anonymous2> {
+    protected processGetDayTransactions(response: Response): Promise<DailyTransactions> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? Anonymous2.fromJS(resultData200) : new Anonymous2();
+            result200 = resultData200 ? DailyTransactions.fromJS(resultData200) : new DailyTransactions();
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -276,15 +276,16 @@ export class Client {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Anonymous2>(<any>null);
+        return Promise.resolve<DailyTransactions>(<any>null);
     }
 }
 
 export class LedgerEntry implements ILedgerEntry {
-    id?: number;
-    userId?: number;
-    merchant?: string;
-    dateTime?: Date;
+    id!: number;
+    userId!: number;
+    merchant!: string;
+    amount!: number;
+    dateTime!: Date;
 
     constructor(data?: ILedgerEntry) {
         if (data) {
@@ -300,6 +301,7 @@ export class LedgerEntry implements ILedgerEntry {
             this.id = data["id"];
             this.userId = data["userId"];
             this.merchant = data["merchant"];
+            this.amount = data["amount"];
             this.dateTime = data["dateTime"] ? new Date(data["dateTime"].toString()) : <any>undefined;
         }
     }
@@ -316,16 +318,18 @@ export class LedgerEntry implements ILedgerEntry {
         data["id"] = this.id;
         data["userId"] = this.userId;
         data["merchant"] = this.merchant;
+        data["amount"] = this.amount;
         data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
         return data; 
     }
 }
 
 export interface ILedgerEntry {
-    id?: number;
-    userId?: number;
-    merchant?: string;
-    dateTime?: Date;
+    id: number;
+    userId: number;
+    merchant: string;
+    amount: number;
+    dateTime: Date;
 }
 
 export enum AccountType {
@@ -335,12 +339,12 @@ export enum AccountType {
 }
 
 export class User implements IUser {
-    id?: number;
-    name?: string;
-    username?: string;
+    id!: number;
+    name!: string;
+    username!: string;
     password?: string;
-    ssn?: string;
-    accountType?: AccountType;
+    ssn!: string;
+    accountType!: AccountType;
 
     constructor(data?: IUser) {
         if (data) {
@@ -382,17 +386,17 @@ export class User implements IUser {
 }
 
 export interface IUser {
-    id?: number;
-    name?: string;
-    username?: string;
+    id: number;
+    name: string;
+    username: string;
     password?: string;
-    ssn?: string;
-    accountType?: AccountType;
+    ssn: string;
+    accountType: AccountType;
 }
 
 export class Body implements IBody {
-    merchant?: string;
-    amount?: number;
+    merchant!: string;
+    amount!: number;
 
     constructor(data?: IBody) {
         if (data) {
@@ -426,21 +430,24 @@ export class Body implements IBody {
 }
 
 export interface IBody {
-    merchant?: string;
-    amount?: number;
+    merchant: string;
+    amount: number;
 }
 
-export class Anonymous implements IAnonymous {
-    balance?: number;
+export class UserTransactions implements IUserTransactions {
+    balance!: number;
     /** List of transactions in order from most recent to least recent */
-    transactions?: LedgerEntry[];
+    transactions!: LedgerEntry[];
 
-    constructor(data?: IAnonymous) {
+    constructor(data?: IUserTransactions) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
+        }
+        if (!data) {
+            this.transactions = [];
         }
     }
 
@@ -455,9 +462,9 @@ export class Anonymous implements IAnonymous {
         }
     }
 
-    static fromJS(data: any): Anonymous {
+    static fromJS(data: any): UserTransactions {
         data = typeof data === 'object' ? data : {};
-        let result = new Anonymous();
+        let result = new UserTransactions();
         result.init(data);
         return result;
     }
@@ -474,24 +481,27 @@ export class Anonymous implements IAnonymous {
     }
 }
 
-export interface IAnonymous {
-    balance?: number;
+export interface IUserTransactions {
+    balance: number;
     /** List of transactions in order from most recent to least recent */
-    transactions?: LedgerEntry[];
+    transactions: LedgerEntry[];
 }
 
-export class Anonymous2 implements IAnonymous2 {
+export class DailyTransactions implements IDailyTransactions {
     /** Sum of the value of all the transactions on the given date */
-    cashFlow?: number;
+    cashFlow!: number;
     /** List of transactions in order from most recent to least recent */
-    transactions?: LedgerEntry[];
+    transactions!: LedgerEntry[];
 
-    constructor(data?: IAnonymous2) {
+    constructor(data?: IDailyTransactions) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
+        }
+        if (!data) {
+            this.transactions = [];
         }
     }
 
@@ -506,9 +516,9 @@ export class Anonymous2 implements IAnonymous2 {
         }
     }
 
-    static fromJS(data: any): Anonymous2 {
+    static fromJS(data: any): DailyTransactions {
         data = typeof data === 'object' ? data : {};
-        let result = new Anonymous2();
+        let result = new DailyTransactions();
         result.init(data);
         return result;
     }
@@ -525,11 +535,11 @@ export class Anonymous2 implements IAnonymous2 {
     }
 }
 
-export interface IAnonymous2 {
+export interface IDailyTransactions {
     /** Sum of the value of all the transactions on the given date */
-    cashFlow?: number;
+    cashFlow: number;
     /** List of transactions in order from most recent to least recent */
-    transactions?: LedgerEntry[];
+    transactions: LedgerEntry[];
 }
 
 export class SwaggerException extends Error {

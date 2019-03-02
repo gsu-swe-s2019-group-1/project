@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
-import { TransactionTable } from './pages/PopulatedPartTable';
+import { TopLevel } from './pages/TopLevel';
 
 export default class App extends Component {
     render() {
-        return (<TransactionTable />)
+        return (<TopLevel />)
     }
 }

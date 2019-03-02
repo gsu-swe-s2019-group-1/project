@@ -2,7 +2,7 @@
   "runtime": "NetCore21",
   "swaggerGenerator": {
     "fromSwagger": {
-      "url": "../api.yaml"
+      "url": "https://avocado-toast.wp6.pw/api.yaml"
     }
   },
   "codeGenerators": {
