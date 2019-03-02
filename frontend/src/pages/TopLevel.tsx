@@ -53,6 +53,9 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
     BoundLoginPage = () => (
         <LoginPage onLogin={this.onLogin} />
     )
+    BoundUserPage = () => (
+        <UserPage user={this.state.user!} />
+    )
 
     render() {
         const path = this.props.location.pathname
@@ -89,7 +92,7 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
                 <Layout>
                     <Content style={{ margin: '24px' }}>
                         <Route path="/login" component={this.BoundLoginPage} />
-                        <Route path="/transactions" component={UserPage} />
+                        <Route path="/transactions" component={this.BoundUserPage} />
                     </Content>
                 </Layout>
             </Layout>)
