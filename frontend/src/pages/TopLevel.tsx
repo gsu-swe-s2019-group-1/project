@@ -1,32 +1,39 @@
 import React from "react"
-import { BrowserRouter as Router, Route, Link, withRouter, RouteComponentProps } from "react-router-dom"
-import { Layout, Menu, Icon } from 'antd'
+import { Route, Link, withRouter, RouteComponentProps, Redirect } from "react-router-dom"
+import { Layout, Menu } from 'antd'
 import { UserPage } from "./UserPage";
-const { Header, Content, Footer, Sider, } = Layout
+import { LoginPage } from "./LoginPage";
+import { User } from "../models/api";
+const { Content, Sider, } = Layout
 
 interface State {
-    sidebarCollapsed: boolean
+    sidebarCollapsed: boolean,
+    user?: User
 }
 
-const ROUTES = [
-    { to: '/transactions', label: 'Transactions' }
+interface AppRoute {
+    to: string
+    label: string
+}
+
+const ROUTES: AppRoute[] = [
+    { to: '/login', label: 'Login' },
+    { to: '/transactions', label: 'Transactions' },
 ]
 
-const SiderMenu = withRouter(({ location }: RouteComponentProps<{}>) => (
-    <Menu theme="dark" selectedKeys={[location.pathname]} mode="inline">
-        {ROUTES.map(({ to, label }) => (
-            <Menu.Item key={to}>
-                <Link to={to}><span>{label}</span></Link>
-            </Menu.Item>
-        ))}
-    </Menu>
-))
+class TopLevelInner extends React.Component<React.PropsWithChildren<RouteComponentProps>, State> {
+    constructor(props: React.PropsWithChildren<RouteComponentProps>) {
+        super(props)
+        let user = undefined
+        try {
+            user = JSON.parse(document.cookie.split("user:")[1])
+        } catch (SyntaxError) {
+            // user not logged in
+        }
 
-export class TopLevel extends React.Component<{}, State> {
-    constructor() {
-        super({})
         this.state = {
-            sidebarCollapsed: false
+            sidebarCollapsed: false,
+            user: user
         }
     }
 
@@ -34,24 +41,59 @@ export class TopLevel extends React.Component<{}, State> {
         this.setState({ sidebarCollapsed: collapsed });
     }
 
+    onLogin = (user: User) => {
+        document.cookie = `user:${JSON.stringify(user.toJSON())}`
+        this.setState({ user })
+    }
+    onLogout = () => {
+        document.cookie = ''
+        this.setState({ user: undefined })
+    }
+
+    BoundLoginPage = () => (
+        <LoginPage onLogin={this.onLogin} />
+    )
+
     render() {
+        const path = this.props.location.pathname
+
+        if (this.state.user == null && path != '/login') {
+            return <Redirect to={'/login'} />
+        }
+        if (this.state.user != null && path == '/login') {
+            return <Redirect to={'/transactions'} />
+        }
+
         return (
-            <Router>
-                <Layout style={{ minHeight: '100vh' }}>
-                    <Sider
-                        collapsible
-                        collapsed={this.state.sidebarCollapsed}
-                        onCollapse={this.onCollapse}
-                    >
-                        <div className="logo" />
-                        <SiderMenu />
-                    </Sider>
-                    <Layout>
-                        <Content style={{ margin: '24px' }}>
-                            <Route path="/transactions" component={UserPage} />
-                        </Content>
-                    </Layout>
+            <Layout style={{ minHeight: '100vh' }}>
+                <Sider
+                    collapsible
+                    collapsed={this.state.sidebarCollapsed}
+                    onCollapse={this.onCollapse}
+                >
+                    <div className="logo" />
+                    <Menu theme="dark" selectedKeys={[path]} mode="inline">
+                        {ROUTES
+                            .filter(({ to }) =>
+                                (path == '/login' && to == '/login') ||
+                                (path != '/login' && to != '/login'))
+                            .map(({ to, label }) => (
+                                <Menu.Item key={to}>
+                                    <Link to={to}><span>{label}</span></Link>
+                                </Menu.Item>
+                            ))}
+                        <Menu.Divider />
+                        <Menu.Item onClick={this.onLogout}>Log out</Menu.Item>
+                    </Menu>
+                </Sider>
+                <Layout>
+                    <Content style={{ margin: '24px' }}>
+                        <Route path="/login" component={this.BoundLoginPage} />
+                        <Route path="/transactions" component={UserPage} />
+                    </Content>
                 </Layout>
-            </Router>)
+            </Layout>)
     }
 }
+
+export const TopLevel = withRouter(TopLevelInner)

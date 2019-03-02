@@ -1,4 +1,4 @@
-import { Client, LedgerEntry, IUserTransactions, UserTransactions } from "../models/api";
+import { Client, IUserTransactions, UserTransactions } from "../models/api";
 import React from "react";
 import { Row, Col, Card } from "antd";
 import { UserTransactionTable } from "../components/UserTransactionTable";

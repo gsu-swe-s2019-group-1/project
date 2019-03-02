@@ -99,25 +99,20 @@ export class Client {
 
     /**
      * Logs user into the system
-     * @param username The user name for login
-     * @param password The password for login in clear text
+     * @param body Created user object
      * @return successful operation
      */
-    loginUser(username: any, password: any): Promise<string> {
-        let url_ = this.baseUrl + "/user/login?";
-        if (username === undefined || username === null)
-            throw new Error("The parameter 'username' must be defined and cannot be null.");
-        else
-            url_ += "username=" + encodeURIComponent("" + username) + "&"; 
-        if (password === undefined || password === null)
-            throw new Error("The parameter 'password' must be defined and cannot be null.");
-        else
-            url_ += "password=" + encodeURIComponent("" + password) + "&"; 
+    loginUser(body: Body): Promise<User> {
+        let url_ = this.baseUrl + "/user/login";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ = <RequestInit>{
-            method: "GET",
+            body: content_,
+            method: "POST",
             headers: {
+                "Content-Type": "application/json", 
                 "Accept": "application/json"
             }
         };
@@ -127,14 +122,14 @@ export class Client {
         });
     }
 
-    protected processLoginUser(response: Response): Promise<string> {
+    protected processLoginUser(response: Response): Promise<User> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? User.fromJS(resultData200) : new User();
             return result200;
             });
         } else if (status === 400) {
@@ -146,7 +141,7 @@ export class Client {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<string>(<any>null);
+        return Promise.resolve<User>(<any>null);
     }
 
     /**
@@ -155,7 +150,7 @@ export class Client {
      * @param body Created transaction object
      * @return Transaction successfully submitted
      */
-    createUserTransaction(userId: number, body: Body): Promise<LedgerEntry> {
+    createUserTransaction(userId: number, body: Body2): Promise<LedgerEntry> {
         let url_ = this.baseUrl + "/ledger/by-user/{userId}";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined.");
@@ -395,10 +390,52 @@ export interface IUser {
 }
 
 export class Body implements IBody {
+    /** The password for login in clear text */
+    password!: string;
+    userName?: string;
+
+    constructor(data?: IBody) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.password = data["password"];
+            this.userName = data["userName"];
+        }
+    }
+
+    static fromJS(data: any): Body {
+        data = typeof data === 'object' ? data : {};
+        let result = new Body();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["password"] = this.password;
+        data["userName"] = this.userName;
+        return data; 
+    }
+}
+
+export interface IBody {
+    /** The password for login in clear text */
+    password: string;
+    userName?: string;
+}
+
+export class Body2 implements IBody2 {
     merchant!: string;
     amount!: number;
 
-    constructor(data?: IBody) {
+    constructor(data?: IBody2) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -414,9 +451,9 @@ export class Body implements IBody {
         }
     }
 
-    static fromJS(data: any): Body {
+    static fromJS(data: any): Body2 {
         data = typeof data === 'object' ? data : {};
-        let result = new Body();
+        let result = new Body2();
         result.init(data);
         return result;
     }
@@ -429,7 +466,7 @@ export class Body implements IBody {
     }
 }
 
-export interface IBody {
+export interface IBody2 {
     merchant: string;
     amount: number;
 }
