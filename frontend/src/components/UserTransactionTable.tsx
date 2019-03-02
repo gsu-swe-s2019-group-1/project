@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { LedgerEntry } from '../models/api';
 import { Table } from 'antd'
 
@@ -6,8 +6,9 @@ export interface UserTransactionTableProps {
     transactions: LedgerEntry[]
 }
 
-export const UserTransactionTable: React.SFC<UserTransactionTableProps> = ({ transactions }) => (
-    <Table
+export const UserTransactionTable: FC<UserTransactionTableProps> = ({
+    transactions
+}) => <Table
         columns={[{
             title: 'Date',
             dataIndex: 'dateTime',
@@ -30,4 +31,3 @@ export const UserTransactionTable: React.SFC<UserTransactionTableProps> = ({ tra
             render: (val: number) => val.toFixed(2),
         },]}
         dataSource={transactions} />
-);

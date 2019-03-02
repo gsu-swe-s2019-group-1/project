@@ -1,12 +1,12 @@
-import React, { useContext } from "react"
+import React from "react"
 import { Route, Link, withRouter, RouteComponentProps, Redirect } from "react-router-dom"
 import { Layout, Menu, Row } from 'antd'
-import { UserPage } from "./UserPage";
-import { LoginPage } from "./LoginPage";
-import { User } from "../models/api";
-import Alert, { AlertProps } from "antd/lib/alert";
-import { isContext } from "vm";
-const { Content, Sider, } = Layout
+import { UserPage } from "./UserPage"
+import { LoginPage } from "./LoginPage"
+import { User } from "../models/api"
+import Alert, { AlertProps } from "antd/lib/alert"
+
+const { Content, Sider } = Layout
 
 export type AlertContextValue = { addAlert: (props: AlertProps) => void } & AlertProps[]
 
@@ -27,6 +27,7 @@ const ROUTES: AppRoute[] = [
 ]
 
 export const AlertContext = React.createContext<AlertContextValue>(undefined as any)
+export const UserContext = React.createContext<User>(undefined as any)
 
 class TopLevelInner extends React.Component<React.PropsWithChildren<RouteComponentProps>, State> {
     constructor(props: React.PropsWithChildren<RouteComponentProps>) {
@@ -70,9 +71,6 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
     BoundLoginPage = () => (
         <LoginPage onLogin={this.onLogin} />
     )
-    BoundUserPage = () => (
-        <UserPage user={this.state.user!} />
-    )
 
     render() {
         const path = this.props.location.pathname
@@ -102,22 +100,26 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
                                     <Link to={to}><span>{label}</span></Link>
                                 </Menu.Item>
                             ))}
-                        <Menu.Divider />
-                        <Menu.Item onClick={this.onLogout}>Log out</Menu.Item>
+                        {path != '/login' ? [
+                            <Menu.Divider />,
+                            <Menu.Item onClick={this.onLogout}>Log out</Menu.Item>
+                        ] : null}
                     </Menu>
                 </Sider>
                 <Layout>
-                    <Row>
-                        {this.state.alerts.map((props) =>
-                            <Alert closable showIcon {...props} />
-                        )}
-                    </Row>
-                    <AlertContext.Provider value={this.state.alerts}>
-                        <Content style={{ margin: '24px' }}>
-                            <Route path="/login" component={this.BoundLoginPage} />
-                            <Route path="/transactions" component={this.BoundUserPage} />
-                        </Content>
-                    </AlertContext.Provider>
+                    <Content style={{ margin: '24px' }}>
+                        <Row>
+                            {this.state.alerts.map((props) =>
+                                <Alert closable showIcon {...props} />
+                            )}
+                        </Row>
+                        <Route path="/login" component={this.BoundLoginPage} />
+                        <UserContext.Provider value={this.state.user!}>
+                            <AlertContext.Provider value={this.state.alerts}>
+                                <Route path="/transactions" component={UserPage} />
+                            </AlertContext.Provider>
+                        </UserContext.Provider>
+                    </Content>
                 </Layout>
             </Layout>)
     }

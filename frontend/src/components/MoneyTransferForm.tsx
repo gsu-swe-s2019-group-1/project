@@ -1,5 +1,5 @@
 import { Client, User, Body2 } from "../models/api";
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useCallback, FC } from "react";
 import { Form, Icon, Input, Button, Drawer, } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import { AlertContext } from "../pages/TopLevel";
@@ -12,8 +12,14 @@ export interface MoneyTransferFormProps {
 }
 const client = new Client()
 
-const MoneyTransferInner: React.SFC<MoneyTransferFormProps & FormComponentProps> = (props) => {
-    const { getFieldDecorator } = props.form;
+const MoneyTransferInner: FC<MoneyTransferFormProps & FormComponentProps> = ({
+    form,
+    user,
+    buttonText,
+    canDeposit,
+    balance,
+}) => {
+    const { getFieldDecorator } = form;
 
     const [drawerVisible, setDrawerVisible] = useState(false)
     const alertContext = React.useContext(AlertContext)
@@ -29,11 +35,11 @@ const MoneyTransferInner: React.SFC<MoneyTransferFormProps & FormComponentProps>
 
     const handleSubmit: React.FormEventHandler<any> = useCallback((e) => {
         e.preventDefault();
-        props.form!.validateFields((err, values) => {
+        form.validateFields((err, values) => {
             debugger
             if (!err) {
                 onClose()
-                client.createUserTransaction(props.user.id, new Body2({
+                client.createUserTransaction(user.id, new Body2({
                     merchant: values.merchant,
                     amount: values.amount,
                 })).then((transaction) => {
@@ -47,9 +53,9 @@ const MoneyTransferInner: React.SFC<MoneyTransferFormProps & FormComponentProps>
 
     return (
         <React.Fragment>
-            <Button onClick={showDrawer}>{props.buttonText}</Button>
+            <Button onClick={showDrawer}>{buttonText}</Button>
             <Drawer
-                title={props.buttonText}
+                title={buttonText}
                 width={720}
                 onClose={onClose}
                 visible={drawerVisible}
@@ -75,11 +81,11 @@ const MoneyTransferInner: React.SFC<MoneyTransferFormProps & FormComponentProps>
                                     message: 'Please add an amount to transfer'
                                 },
                                 {
-                                    max: props.balance,
+                                    max: balance,
                                     message: "You can't transfer more money than you have"
                                 },
                                 {
-                                    min: props.canDeposit ? -9999999999 : 0.01,
+                                    min: canDeposit ? -9999999999 : 0.01,
                                     message: "You can only transfer money out of your account"
                                 },
                             ],

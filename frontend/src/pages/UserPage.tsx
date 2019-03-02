@@ -1,55 +1,51 @@
-import { Client, IUserTransactions, UserTransactions, User } from "../models/api";
-import React from "react";
-import { Row, Col, Card, Button } from "antd";
+import { Client, UserTransactions, User, LedgerEntry } from "../models/api";
+import React, { useState, useEffect, FC, useContext } from "react";
+import { Row, Col, Card } from "antd";
 import { UserTransactionTable } from "../components/UserTransactionTable";
 import { MoneyTransferForm } from "../components/MoneyTransferForm";
+import { UserContext } from "./TopLevel";
 
 const client = new Client()
 
-export interface UserPageProps {
-    user: User
-}
+export const UserPage: FC = () => {
+    const [balance, setBalance] = useState<number>(0)
+    const [transactions, setTransactions] = useState<LedgerEntry[]>([])
 
-export class UserPage extends React.Component<UserPageProps, IUserTransactions> {
-    constructor(props: UserPageProps) {
-        super(props);
-        this.state = {
-            balance: 0,
-            transactions: []
-        }
-    }
+    const user = useContext(UserContext)
 
-    componentDidMount() {
-        client.getUserTransactions(this.props.user.id).then(
-            (data: UserTransactions) => this.setState(data))
-    }
+    useEffect(() => {
+        client.getUserTransactions(user.id).then(
+            (data: UserTransactions) => {
+                setBalance(data.balance)
+                setTransactions(data.transactions)
+            })
+    }, [user, setBalance, setTransactions])
 
-    render() {
-        return (
-            <React.Fragment>
-                <Row>
-                    <Card className="headerInfo">
-                        <Row>
-                            <Col span={12}>
-                                <span>Welcome</span>
-                                <p>{this.props.user.name}!</p>
-                                <em />
-                            </Col>
-                            <Col span={12}>
-                                <span>Balance</span>
-                                <p>${this.state.balance.toFixed(2)}</p>
-                            </Col>
-                        </Row>
-                    </Card>
-                </Row>
-                <Row>
-                    <MoneyTransferForm
-                        balance={10}
-                        buttonText="Send money"
-                        canDeposit={false}
-                        user={this.props.user} />
-                </Row>
-                <UserTransactionTable transactions={this.state.transactions} />
-            </React.Fragment>)
-    }
+    return (
+        <React.Fragment>
+            <Row>
+                <Card className="headerInfo">
+                    <Row>
+                        <Col span={12}>
+                            <span>Welcome</span>
+                            <p>{user.name}!</p>
+                            <em />
+                        </Col>
+                        <Col span={12}>
+                            <span>Balance</span>
+                            <p>${balance.toFixed(2)}</p>
+                        </Col>
+                    </Row>
+                </Card>
+            </Row>
+            <Row>
+                <MoneyTransferForm
+                    balance={10}
+                    buttonText="Send money"
+                    canDeposit={false}
+                    user={user} />
+            </Row>
+            <UserTransactionTable transactions={transactions} />
+        </React.Fragment>
+    )
 }
