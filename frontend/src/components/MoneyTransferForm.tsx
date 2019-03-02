@@ -1,4 +1,4 @@
-import { Client, User, Body2 } from "../models/api";
+import { Client, Body2, IUser } from "../models/api";
 import React, { useState, useCallback, FC } from "react";
 import { Form, Icon, Input, Button, Drawer, } from "antd";
 import { FormComponentProps } from "antd/lib/form";
@@ -8,7 +8,7 @@ export interface MoneyTransferFormProps {
     buttonText: string
     balance: number
     canDeposit: boolean
-    user: User
+    user: IUser
 }
 const client = new Client()
 

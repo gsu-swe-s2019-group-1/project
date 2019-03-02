@@ -1,25 +1,33 @@
-import { Client, UserTransactions, User, LedgerEntry } from "../models/api";
+import { Client, UserTransactions, User, LedgerEntry, IUser } from "../models/api";
 import React, { useState, useEffect, FC, useContext } from "react";
 import { Row, Col, Card } from "antd";
 import { UserTransactionTable } from "../components/UserTransactionTable";
 import { MoneyTransferForm } from "../components/MoneyTransferForm";
-import { UserContext } from "./TopLevel";
 
 const client = new Client()
 
-export const UserPage: FC = () => {
+export const UserPage: FC<{ userOrId: IUser | number }> = ({ userOrId }) => {
+    const userId = typeof userOrId === 'number' ? userOrId : userOrId.id
+
     const [balance, setBalance] = useState<number>(0)
     const [transactions, setTransactions] = useState<LedgerEntry[]>([])
-
-    const user = useContext(UserContext)
+    const [user, setUser] = useState<IUser | null>(
+        typeof userOrId === 'number' ? null : userOrId)
 
     useEffect(() => {
-        client.getUserTransactions(user.id).then(
+        if (typeof userOrId !== 'number')
+            return
+        client.getUserTransactions(userOrId).then(
             (data: UserTransactions) => {
                 setBalance(data.balance)
                 setTransactions(data.transactions)
+                setUser(user)
             })
-    }, [user, setBalance, setTransactions])
+    }, [userOrId, setBalance, setTransactions])
+
+    if (user == null) {
+        return null
+    }
 
     return (
         <React.Fragment>

@@ -2,11 +2,12 @@ import { Client, User } from "../models/api";
 import React, { FC, useCallback } from "react";
 import { Form, Icon, Input, Button, } from "antd";
 import { FormComponentProps } from "antd/lib/form";
+import { Redirect } from "react-router-dom";
 
 const client = new Client()
 
 export interface LoginPageProps {
-    onLogin: (user: User) => void
+    onLogin: (user?: User) => void
 }
 
 export const LoginPageInner: FC<LoginPageProps & FormComponentProps> = ({
@@ -47,6 +48,11 @@ export const LoginPageInner: FC<LoginPageProps & FormComponentProps> = ({
             </Form.Item>
         </Form>
     );
+}
+
+export const LogoutPage: FC<LoginPageProps> = ({ onLogin }) => {
+    onLogin(undefined)
+    return <Redirect to={'/login'} />
 }
 
 export const LoginPage: React.ComponentType<LoginPageProps> = Form.create<LoginPageProps>()(LoginPageInner);

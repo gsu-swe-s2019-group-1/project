@@ -30,4 +30,5 @@ export const UserTransactionTable: FC<UserTransactionTableProps> = ({
             align: 'right',
             render: (val: number) => val.toFixed(2),
         },]}
-        dataSource={transactions} />
+        dataSource={transactions}
+        rowKey="id" />

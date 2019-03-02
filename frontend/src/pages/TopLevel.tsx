@@ -1,10 +1,11 @@
-import React from "react"
+import React, { FC } from "react"
 import { Route, Link, withRouter, RouteComponentProps, Redirect } from "react-router-dom"
 import { Layout, Menu, Row } from 'antd'
 import { UserPage } from "./UserPage"
-import { LoginPage } from "./LoginPage"
+import { LoginPage, LogoutPage } from "./LoginPage"
 import { User } from "../models/api"
 import Alert, { AlertProps } from "antd/lib/alert"
+import { CustomerListPage } from "./CustomerListPagePage";
 
 const { Content, Sider } = Layout
 
@@ -19,12 +20,9 @@ interface State {
 interface AppRoute {
     to: string
     label: string
+    showMenuIf: (path: string, user?: User) => boolean
+    component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
 }
-
-const ROUTES: AppRoute[] = [
-    { to: '/login', label: 'Login' },
-    { to: '/transactions', label: 'Transactions' },
-]
 
 export const AlertContext = React.createContext<AlertContextValue>(undefined as any)
 export const UserContext = React.createContext<User>(undefined as any)
@@ -59,17 +57,23 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
         this.setState({ sidebarCollapsed: collapsed });
     }
 
-    onLogin = (user: User) => {
-        document.cookie = `user:${JSON.stringify(user.toJSON())}`
+    onLogin = (user: User | undefined) => {
+        if (user == null) {
+            document.cookie = ''
+        } else {
+            document.cookie = `user:${JSON.stringify(user.toJSON())}`
+        }
         this.setState({ user })
     }
-    onLogout = () => {
-        document.cookie = ''
-        this.setState({ user: undefined })
-    }
 
-    BoundLoginPage = () => (
+    BoundLoginPage: FC = () => (
         <LoginPage onLogin={this.onLogin} />
+    )
+    BoundLogoutPage: FC = () => (
+        <LogoutPage onLogin={this.onLogin} />
+    )
+    BoundTransactionList: FC = () => (
+        <UserPage userOrId={this.state.user!} />
     )
 
     render() {
@@ -82,6 +86,35 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
             return <Redirect to={'/transactions'} />
         }
 
+        const routes: AppRoute[] = [
+            {
+                to: '/login', label: 'Login',
+                showMenuIf: (path, user) => user == null,
+                component: this.BoundLoginPage,
+            },
+            {
+                to: '/transactions', label: 'Transactions',
+                showMenuIf: (path, user) => user != null,
+                component: this.BoundTransactionList,
+            },
+            {
+                to: '/transactions/:userId', label: 'Transactions',
+                showMenuIf: () => false,
+                component: (({ match }: RouteComponentProps<{ userId: string }>) =>
+                    <UserPage userOrId={parseInt(match.params.userId)} />),
+            },
+            {
+                to: '/customers', label: 'Customers',
+                showMenuIf: (path, user) => user != null,
+                component: CustomerListPage,
+            },
+            {
+                to: '/logout', label: 'Log out',
+                showMenuIf: (path, user) => user != null,
+                component: this.BoundLogoutPage,
+            },
+        ]
+
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <Sider
@@ -91,19 +124,14 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
                 >
                     <div className="logo" />
                     <Menu theme="dark" selectedKeys={[path]} mode="inline">
-                        {ROUTES
-                            .filter(({ to }) =>
-                                (path == '/login' && to == '/login') ||
-                                (path != '/login' && to != '/login'))
+                        {routes
+                            .filter(({ showMenuIf }) =>
+                                showMenuIf(path, this.state.user))
                             .map(({ to, label }) => (
                                 <Menu.Item key={to}>
                                     <Link to={to}><span>{label}</span></Link>
                                 </Menu.Item>
                             ))}
-                        {path != '/login' ? [
-                            <Menu.Divider />,
-                            <Menu.Item onClick={this.onLogout}>Log out</Menu.Item>
-                        ] : null}
                     </Menu>
                 </Sider>
                 <Layout>
@@ -113,10 +141,10 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
                                 <Alert closable showIcon {...props} />
                             )}
                         </Row>
-                        <Route path="/login" component={this.BoundLoginPage} />
                         <UserContext.Provider value={this.state.user!}>
                             <AlertContext.Provider value={this.state.alerts}>
-                                <Route path="/transactions" component={UserPage} />
+                                {routes.map(({ to, component }) =>
+                                    <Route key={to} path={to} component={component} />)}
                             </AlertContext.Provider>
                         </UserContext.Provider>
                     </Content>
