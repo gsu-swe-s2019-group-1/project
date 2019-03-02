@@ -102,12 +102,16 @@ paths:
           type: "integer"
           format: "int64"
       requestBody:
-        description: "Created user object"
+        description: "Created transaction object"
         required: true
         content:
           application/json:
             schema:
               type: "object"
+              title: "TransactionInput"
+              required:
+                - merchant
+                - amount
               properties:
                 merchant:
                   type: "string"
@@ -142,7 +146,11 @@ paths:
           content:
             application/json:
               schema:
+                title: "UserTransactions"
                 type: "object"
+                required:
+                  - balance
+                  - transactions
                 properties:
                   balance:
                     type: "number"
@@ -173,6 +181,10 @@ paths:
             application/json:
               schema:
                 type: "object"
+                title: "DailyTransactions"
+                required:
+                  - cashFlow
+                  - transactions
                 properties:
                   cashFlow:
                     description: "Sum of the value of all the transactions on the given date"
@@ -186,6 +198,11 @@ components:
   schemas:
     LedgerEntry:
       type: "object"
+      required:
+        - id
+        - userId
+        - merchant
+        - dateTime
       properties:
         id:
           type: "integer"
@@ -206,6 +223,12 @@ components:
         - "analysist"
     User:
       type: "object"
+      required:
+        - id
+        - name
+        - username
+        - ssn
+        - accountType
       properties:
         id:
           type: "integer"
