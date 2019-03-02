@@ -1,0 +1,16 @@
+﻿{
+  "runtime": "NetCore21",
+  "swaggerGenerator": {
+    "fromSwagger": {
+      "url": "../api.yaml"
+    }
+  },
+  "codeGenerators": {
+    "swaggerToTypeScriptClient": {
+      "typeScriptVersion": 3.3,
+      "operationGenerationMode": "MultipleClientsFromOperationId",
+      "excludedTypeNames": ["PartialClient"],
+      "output": "./src/models/api.ts"
+    }
+  }
+}
