@@ -83,7 +83,7 @@ paths:
           content:
             application/json:
               schema:
-                type: "string"
+                $ref: "#/components/schemas/User"
         400:
           description: "Invalid username/password supplied"
   /ledger/by-user/{userId}:
@@ -218,6 +218,7 @@ components:
         dateTime:
           type: "string"
           format: "date-time"
+          example: "2019-03-02T00:58:59Z"
     AccountType:
       type: "string"
       enum:
