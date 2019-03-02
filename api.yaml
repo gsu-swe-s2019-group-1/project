@@ -203,6 +203,7 @@ components:
         - userId
         - merchant
         - dateTime
+        - amount
       properties:
         id:
           type: "integer"
@@ -212,6 +213,8 @@ components:
           format: "int64"
         merchant:
           type: "string"
+        amount:
+          type: "number"
         dateTime:
           type: "string"
           format: "date-time"
