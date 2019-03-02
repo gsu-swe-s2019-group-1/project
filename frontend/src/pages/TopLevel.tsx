@@ -1,14 +1,19 @@
-import React from "react"
+import React, { useContext } from "react"
 import { Route, Link, withRouter, RouteComponentProps, Redirect } from "react-router-dom"
-import { Layout, Menu } from 'antd'
+import { Layout, Menu, Row } from 'antd'
 import { UserPage } from "./UserPage";
 import { LoginPage } from "./LoginPage";
 import { User } from "../models/api";
+import Alert, { AlertProps } from "antd/lib/alert";
+import { isContext } from "vm";
 const { Content, Sider, } = Layout
+
+export type AlertContextValue = { addAlert: (props: AlertProps) => void } & AlertProps[]
 
 interface State {
     sidebarCollapsed: boolean,
     user?: User
+    alerts: AlertContextValue
 }
 
 interface AppRoute {
@@ -20,6 +25,8 @@ const ROUTES: AppRoute[] = [
     { to: '/login', label: 'Login' },
     { to: '/transactions', label: 'Transactions' },
 ]
+
+export const AlertContext = React.createContext<AlertContextValue>(undefined as any)
 
 class TopLevelInner extends React.Component<React.PropsWithChildren<RouteComponentProps>, State> {
     constructor(props: React.PropsWithChildren<RouteComponentProps>) {
@@ -33,8 +40,18 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
 
         this.state = {
             sidebarCollapsed: false,
-            user: user
+            user: user,
+            alerts: Object.assign([],
+                { addAlert: this.addAlert }),
         }
+    }
+
+    addAlert = (props: AlertProps) => {
+        this.setState({
+            alerts: Object.assign(
+                this.state.alerts.concat([props]),
+                { addAlert: this.addAlert })
+        })
     }
 
     onCollapse = (collapsed: boolean) => {
@@ -90,10 +107,17 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
                     </Menu>
                 </Sider>
                 <Layout>
-                    <Content style={{ margin: '24px' }}>
-                        <Route path="/login" component={this.BoundLoginPage} />
-                        <Route path="/transactions" component={this.BoundUserPage} />
-                    </Content>
+                    <Row>
+                        {this.state.alerts.map((props) =>
+                            <Alert closable showIcon {...props} />
+                        )}
+                    </Row>
+                    <AlertContext.Provider value={this.state.alerts}>
+                        <Content style={{ margin: '24px' }}>
+                            <Route path="/login" component={this.BoundLoginPage} />
+                            <Route path="/transactions" component={this.BoundUserPage} />
+                        </Content>
+                    </AlertContext.Provider>
                 </Layout>
             </Layout>)
     }

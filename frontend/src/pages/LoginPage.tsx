@@ -24,7 +24,7 @@ class LoginPageInner extends React.Component<LoginPageProps & FormComponentProps
     render() {
         const { getFieldDecorator } = this.props.form;
         return (
-            <Form onSubmit={this.handleSubmit} className="login-form">
+            <Form onSubmit={this.handleSubmit}>
                 <Form.Item>
                     {getFieldDecorator('username', {
                         rules: [{ required: true, message: 'Please input your username!' }],
@@ -40,7 +40,7 @@ class LoginPageInner extends React.Component<LoginPageProps & FormComponentProps
                     )}
                 </Form.Item>
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" className="login-form-button">
+                    <Button type="primary" htmlType="submit">
                         Log in
                     </Button>
                 </Form.Item>
