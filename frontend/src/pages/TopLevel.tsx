@@ -88,7 +88,7 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
         if (this.state.user == null) {
             return <Skeleton active />
         }
-        return <UserPage user={this.state.user} />
+        return <UserPage user={this.state.user} canDeposit={false}/>
     }
 
     render() {

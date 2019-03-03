@@ -74,22 +74,29 @@ const MoneyTransferInner: FC<MoneyTransferFormProps & FormComponentProps> = ({
                     </Form.Item>
                     <Form.Item>
                         {getFieldDecorator('amount', {
-                            rules: [
-                                {
-                                    required: true,
-                                    message: 'Please add an amount to transfer'
-                                },
-                                {
-                                    max: balance,
-                                    message: "You can't transfer more money than you have"
-                                },
-                                {
-                                    min: canDeposit ? -9999999999 : 0.01,
-                                    message: "You can only transfer money out of your account"
-                                },
-                            ],
+                            getValueFromEvent: (e: React.FormEvent<HTMLInputElement>) => {
+                                const convertedValue = Number(e.currentTarget.value);
+                                if (isNaN(convertedValue)) {
+                                    return Number(form.getFieldValue("amount"));
+                                } else {
+                                    return convertedValue;
+                                }
+                            },
+                            rules: [{
+                                required: true,
+                                message: 'Please add an amount to transfer'
+                            }, {
+                                validator: (rule, value, callback) =>
+                                    callback(value <= balance ? [] : ["You can't transfer more money than you have"]),
+                            }, {
+                                validator: (rule, value, callback) =>
+                                    callback(canDeposit || value > 0.01 ? [] : ["You can only transfer money out of your account"]),
+                            },],
                         })(
-                            <Input prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />} type="number" placeholder="Amount" />
+                            <Input
+                                prefix={<Icon type="dollar" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                                type="number"
+                                placeholder="Amount" />
                         )}
                     </Form.Item>
                     <div style={{

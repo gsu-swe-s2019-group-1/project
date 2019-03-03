@@ -8,7 +8,7 @@ const client = new Client()
 
 export interface UserPageProps {
     user: IUser,
-    canDeposit?: boolean,
+    canDeposit: boolean,
 }
 
 export const UserPage: FC<UserPageProps> = ({ user, canDeposit }) => {
@@ -22,8 +22,6 @@ export const UserPage: FC<UserPageProps> = ({ user, canDeposit }) => {
                 setTransactions(data.transactions)
             })
     }, [user, setBalance, setTransactions])
-
-    const canDepositBool = canDeposit == null ? false : true
 
     return (
         <React.Fragment>
@@ -44,9 +42,9 @@ export const UserPage: FC<UserPageProps> = ({ user, canDeposit }) => {
             </Row>
             <Row>
                 <MoneyTransferForm
-                    balance={10}
-                    buttonText={canDepositBool ? "Add transaction" : "Send money"}
-                    canDeposit={canDepositBool}
+                    balance={balance}
+                    buttonText={canDeposit ? "Add transaction" : "Send money"}
+                    canDeposit={canDeposit}
                     user={user} />
             </Row>
             <UserTransactionTable transactions={transactions} />
