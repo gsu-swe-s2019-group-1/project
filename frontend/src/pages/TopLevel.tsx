@@ -100,9 +100,6 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
         if (this.state.user != null && path == '/login') {
             return <Redirect to={'/transactions'} />
         }
-        if (this.state.user == null) {
-            return <Skeleton active />
-        }
 
         const routes: AppRoute[] = [
             {
@@ -168,7 +165,7 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
                                 <Alert closable showIcon {...props} />
                             )}
                         </Row>
-                        <UserContext.Provider value={this.state.user}>
+                        <UserContext.Provider value={this.state.user!}>
                             <AlertContext.Provider value={this.state.alerts}>
                                 {routes.map(({ to, component, exact }) =>
                                     <Route key={to} path={to} exact={exact} component={component} />)}
