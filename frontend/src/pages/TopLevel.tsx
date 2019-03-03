@@ -6,6 +6,7 @@ import { LoginPage, LogoutPage } from "./LoginPage"
 import { User, Client, AccountType } from "../models/api"
 import Alert, { AlertProps } from "antd/lib/alert"
 import { CustomerListPage } from "./CustomerListPagePage";
+import { AnalysisPage } from "./AnalysisPage";
 
 const { Content, Sider } = Layout
 
@@ -128,6 +129,11 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
                 to: '/customers', label: 'Customers',
                 showMenuIf: (path, user) => user != null,
                 component: CustomerListPage,
+            },
+            {
+                to: '/analysis', label: 'Daily analysis',
+                showMenuIf: (path, user) => user != null,
+                component: AnalysisPage,
             },
             {
                 to: '/logout', label: 'Log out',
