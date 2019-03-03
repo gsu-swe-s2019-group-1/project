@@ -1,9 +1,9 @@
 import React, { FC } from "react"
 import { Route, Link, withRouter, RouteComponentProps, Redirect } from "react-router-dom"
-import { Layout, Menu, Row } from 'antd'
+import { Layout, Menu, Row, Skeleton } from 'antd'
 import { UserPage } from "./UserPage"
 import { LoginPage, LogoutPage } from "./LoginPage"
-import { User } from "../models/api"
+import { User, Client, AccountType } from "../models/api"
 import Alert, { AlertProps } from "antd/lib/alert"
 import { CustomerListPage } from "./CustomerListPagePage";
 
@@ -12,14 +12,18 @@ const { Content, Sider } = Layout
 export type AlertContextValue = { addAlert: (props: AlertProps) => void } & AlertProps[]
 
 interface State {
-    sidebarCollapsed: boolean,
+    sidebarCollapsed: boolean
     user?: User
     alerts: AlertContextValue
+    users: User[]
 }
+
+const client = new Client()
 
 interface AppRoute {
     to: string
     label: string
+    exact?: boolean
     showMenuIf: (path: string, user?: User) => boolean
     component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
 }
@@ -40,9 +44,16 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
         this.state = {
             sidebarCollapsed: false,
             user: user,
+            users: [],
             alerts: Object.assign([],
                 { addAlert: this.addAlert }),
         }
+    }
+
+    componentDidMount() {
+        client.getUserList(AccountType.Customer).then(userList => {
+            this.setState({ ...this.state, users: userList })
+        })
     }
 
     addAlert = (props: AlertProps) => {
@@ -72,9 +83,12 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
     BoundLogoutPage: FC = () => (
         <LogoutPage onLogin={this.onLogin} />
     )
-    BoundTransactionList: FC = () => (
-        <UserPage userOrId={this.state.user!} />
-    )
+    BoundTransactionList: FC = () => {
+        if (this.state.user == null) {
+            return <Skeleton active />
+        }
+        return <UserPage user={this.state.user} />
+    }
 
     render() {
         const path = this.props.location.pathname
@@ -84,6 +98,9 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
         }
         if (this.state.user != null && path == '/login') {
             return <Redirect to={'/transactions'} />
+        }
+        if (this.state.user == null) {
+            return <Skeleton active />
         }
 
         const routes: AppRoute[] = [
@@ -96,12 +113,16 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
                 to: '/transactions', label: 'Transactions',
                 showMenuIf: (path, user) => user != null,
                 component: this.BoundTransactionList,
+                exact: true,
             },
             {
                 to: '/transactions/:userId', label: 'Transactions',
                 showMenuIf: () => false,
                 component: (({ match }: RouteComponentProps<{ userId: string }>) =>
-                    <UserPage userOrId={parseInt(match.params.userId)} />),
+                    <UserPage user={this.state.users
+                        .filter(user =>
+                            user.id == parseInt(match.params.userId))[0]}
+                        canDeposit={true} />),
             },
             {
                 to: '/customers', label: 'Customers',
@@ -141,10 +162,10 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
                                 <Alert closable showIcon {...props} />
                             )}
                         </Row>
-                        <UserContext.Provider value={this.state.user!}>
+                        <UserContext.Provider value={this.state.user}>
                             <AlertContext.Provider value={this.state.alerts}>
-                                {routes.map(({ to, component }) =>
-                                    <Route key={to} path={to} component={component} />)}
+                                {routes.map(({ to, component, exact }) =>
+                                    <Route key={to} path={to} exact={exact} component={component} />)}
                             </AlertContext.Provider>
                         </UserContext.Provider>
                     </Content>

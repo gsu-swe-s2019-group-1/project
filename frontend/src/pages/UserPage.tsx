@@ -6,28 +6,24 @@ import { MoneyTransferForm } from "../components/MoneyTransferForm";
 
 const client = new Client()
 
-export const UserPage: FC<{ userOrId: IUser | number }> = ({ userOrId }) => {
-    const userId = typeof userOrId === 'number' ? userOrId : userOrId.id
+export interface UserPageProps {
+    user: IUser,
+    canDeposit?: boolean,
+}
 
+export const UserPage: FC<UserPageProps> = ({ user, canDeposit }) => {
     const [balance, setBalance] = useState<number>(0)
     const [transactions, setTransactions] = useState<LedgerEntry[]>([])
-    const [user, setUser] = useState<IUser | null>(
-        typeof userOrId === 'number' ? null : userOrId)
 
     useEffect(() => {
-        if (typeof userOrId !== 'number')
-            return
-        client.getUserTransactions(userOrId).then(
+        client.getUserTransactions(user.id).then(
             (data: UserTransactions) => {
                 setBalance(data.balance)
                 setTransactions(data.transactions)
-                setUser(user)
             })
-    }, [userOrId, setBalance, setTransactions])
+    }, [user, setBalance, setTransactions])
 
-    if (user == null) {
-        return null
-    }
+    const canDepositBool = canDeposit == null ? false : true
 
     return (
         <React.Fragment>
@@ -49,8 +45,8 @@ export const UserPage: FC<{ userOrId: IUser | number }> = ({ userOrId }) => {
             <Row>
                 <MoneyTransferForm
                     balance={10}
-                    buttonText="Send money"
-                    canDeposit={false}
+                    buttonText={canDepositBool ? "Add transaction" : "Send money"}
+                    canDeposit={canDepositBool}
                     user={user} />
             </Row>
             <UserTransactionTable transactions={transactions} />
