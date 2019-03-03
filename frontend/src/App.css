@@ -1,9 +1,9 @@
 @import '~antd/dist/antd.css';
 
 .logo {
-    height: 32px;
-    background: rgba(255,255,255,.2);
+    height: 100px;
     margin: 16px;
+    text-align: center
 }
 
 .ant-layout-content {

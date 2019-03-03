@@ -146,7 +146,7 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
                     collapsed={this.state.sidebarCollapsed}
                     onCollapse={this.onCollapse}
                 >
-                    <div className="logo" />
+                    <div className="logo" ><img src={require('../logo.svg')}></img></div>
                     <Menu theme="dark" selectedKeys={[path]} mode="inline">
                         {routes
                             .filter(({ showMenuIf }) =>
