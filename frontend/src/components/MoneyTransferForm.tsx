@@ -36,7 +36,6 @@ const MoneyTransferInner: FC<MoneyTransferFormProps & FormComponentProps> = ({
     const handleSubmit: React.FormEventHandler<any> = useCallback((e) => {
         e.preventDefault();
         form.validateFields((err, values) => {
-            debugger
             if (!err) {
                 onClose()
                 client.createUserTransaction(user.id, new Body2({

@@ -1,6 +1,8 @@
 import { Client, User, AccountType, IUser } from "../models/api";
 import React, { useState, useEffect, FC } from "react";
 import { UserTable } from "../components/UserTable";
+import { UserCreationForm } from "../components/UserCreationForm";
+import { Row } from "antd";
 
 const client = new Client()
 
@@ -31,6 +33,7 @@ export const CustomerListPage: FC = () => {
 
     return (
         <React.Fragment>
+            <Row><UserCreationForm /></Row>
             <UserTable users={customers} />
         </React.Fragment>
     )
