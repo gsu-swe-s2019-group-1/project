@@ -10,21 +10,9 @@ This is an example of building a swagger-enabled server in Java using the Spring
 
 The underlying library integrating swagger to SpringBoot is [springfox](https://github.com/springfox/springfox)  
 
-Start your server by running `gradle run`.
+Start your server as an simple java application  
 
 You can view the api documentation in swagger-ui by pointing to  
 http://localhost:8080/  
 
 Change default port value in application.properties
-
-## Generated using
-
-```
-java -jar swagger-codegen-cli.jar generate \                                                                                                                                      master ✚ ◼
-  -i https://avocado-toast.wp6.pw/api.yaml \
-  --api-package pw.wp6.avocado_toast.api \
-  --model-package pw.wp6.avocado_toast.model \
-  --invoker-package pw.wp6.avocado_toast.invoker \
-  --group-id pw.wp6.avocado_toast \
-  -l spring
-```

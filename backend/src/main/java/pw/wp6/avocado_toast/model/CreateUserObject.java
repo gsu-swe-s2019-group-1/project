@@ -11,14 +11,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * User
+ * CreateUserObject
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-03-03T23:33:49.816-05:00[America/New_York]")
-public class User   {
-  @JsonProperty("id")
-  private Long id = null;
-
+public class CreateUserObject   {
   @JsonProperty("name")
   private String name = null;
 
@@ -34,27 +31,7 @@ public class User   {
   @JsonProperty("accountType")
   private AccountType accountType = null;
 
-  public User id(Long id) {
-    this.id = id;
-    return this;
-  }
-
-  /**
-   * Get id
-   * @return id
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public User name(String name) {
+  public CreateUserObject name(String name) {
     this.name = name;
     return this;
   }
@@ -74,7 +51,7 @@ public class User   {
     this.name = name;
   }
 
-  public User username(String username) {
+  public CreateUserObject username(String username) {
     this.username = username;
     return this;
   }
@@ -94,7 +71,7 @@ public class User   {
     this.username = username;
   }
 
-  public User password(String password) {
+  public CreateUserObject password(String password) {
     this.password = password;
     return this;
   }
@@ -113,7 +90,7 @@ public class User   {
     this.password = password;
   }
 
-  public User ssn(String ssn) {
+  public CreateUserObject ssn(String ssn) {
     this.ssn = ssn;
     return this;
   }
@@ -133,7 +110,7 @@ public class User   {
     this.ssn = ssn;
   }
 
-  public User accountType(AccountType accountType) {
+  public CreateUserObject accountType(AccountType accountType) {
     this.accountType = accountType;
     return this;
   }
@@ -163,26 +140,24 @@ public class User   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    User user = (User) o;
-    return Objects.equals(this.id, user.id) &&
-        Objects.equals(this.name, user.name) &&
-        Objects.equals(this.username, user.username) &&
-        Objects.equals(this.password, user.password) &&
-        Objects.equals(this.ssn, user.ssn) &&
-        Objects.equals(this.accountType, user.accountType);
+    CreateUserObject createUserObject = (CreateUserObject) o;
+    return Objects.equals(this.name, createUserObject.name) &&
+        Objects.equals(this.username, createUserObject.username) &&
+        Objects.equals(this.password, createUserObject.password) &&
+        Objects.equals(this.ssn, createUserObject.ssn) &&
+        Objects.equals(this.accountType, createUserObject.accountType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, username, password, ssn, accountType);
+    return Objects.hash(name, username, password, ssn, accountType);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class User {\n");
+    sb.append("class CreateUserObject {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
