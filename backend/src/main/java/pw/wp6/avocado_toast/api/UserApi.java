@@ -23,21 +23,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-03-03T23:33:49.816-05:00[America/New_York]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-03-04T01:09:12.686-05:00[America/New_York]")
 @Api(value = "user", description = "the user API")
 public interface UserApi {
 
-    @ApiOperation(value = "Create user", nickname = "createUser", notes = "This can only be done by the logged in banker.", response = User.class, responseContainer = "List", tags={  })
+    @ApiOperation(value = "Create user", nickname = "createUser", notes = "This can only be done by the logged in banker.", response = User.class, tags={  })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "successful operation", response = User.class, responseContainer = "List") })
+        @ApiResponse(code = 200, message = "successful operation", response = User.class) })
     @RequestMapping(value = "/user",
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<List<User>> createUser(@ApiParam(value = "Created user object" ,required=true )  @Valid @RequestBody CreateUserObject body) throws SQLException;
+    ResponseEntity<User> createUser(@ApiParam(value = "Created user object" ,required=true )  @Valid @RequestBody CreateUserObject body) throws SQLException;
 
 
     @ApiOperation(value = "get a list of all availible users", nickname = "getUserList", notes = "", response = User.class, responseContainer = "List", tags={  })

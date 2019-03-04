@@ -43,7 +43,7 @@ public class UserApiController implements UserApi {
         this.request = request;
     }
 
-    public ResponseEntity<List<User>> createUser(@ApiParam(value = "Created user object" ,required=true )  @Valid @RequestBody CreateUserObject body) throws SQLException {
+    public ResponseEntity<User> createUser(@ApiParam(value = "Created user object" ,required=true )  @Valid @RequestBody CreateUserObject body) throws SQLException {
         String accept = request.getHeader("Accept");
         PreparedStatement addUser = DatabaseConnection.c.prepareStatement("INSERT INTO user VALUES (id, name, username, password, ssn, accountType");
         addUser.setLong(1, body.getId());
@@ -52,7 +52,7 @@ public class UserApiController implements UserApi {
         addUser.setString(4, body.getPassword());
         addUser.setString(5, body.getSsn());
         addUser.setString(6, body.getAccountType().name());
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<List<User>> getUserList(@NotNull @ApiParam(value = "the type of user account to look up", required = true) @Valid @RequestParam(value = "accountType", required = true) AccountType accountType) {
