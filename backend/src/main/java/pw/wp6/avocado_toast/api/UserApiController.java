@@ -1,5 +1,6 @@
 package pw.wp6.avocado_toast.api;
 
+import pw.wp6.avocado_toast.invoker.DatabaseConnection;
 import pw.wp6.avocado_toast.model.AccountType;
 import pw.wp6.avocado_toast.model.LoginParameters;
 import pw.wp6.avocado_toast.model.User;
@@ -21,6 +22,8 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-03-02T16:08:55.885-05:00[America/New_York]")
@@ -39,8 +42,15 @@ public class UserApiController implements UserApi {
         this.request = request;
     }
 
-    public ResponseEntity<Void> createUser(@ApiParam(value = "Created user object" ,required=true )  @Valid @RequestBody User body) {
+    public ResponseEntity<Void> createUser(@ApiParam(value = "Created user object" ,required=true )  @Valid @RequestBody User body) throws SQLException {
         String accept = request.getHeader("Accept");
+        PreparedStatement addUser = DatabaseConnection.c.prepareStatement("INSERT INTO user VALUES (id, name, username, password, ssn, accountType");
+        addUser.setLong(1, body.getId());
+        addUser.setString(2, body.getName());
+        addUser.setString(3, body.getUsername());
+        addUser.setString(4, body.getPassword());
+        addUser.setString(5, body.getSsn());
+        addUser.setString(6, body.getAccountType().name());
         return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }
 

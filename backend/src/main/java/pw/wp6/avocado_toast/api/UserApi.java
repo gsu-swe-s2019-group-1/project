@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-03-02T16:08:55.885-05:00[America/New_York]")
@@ -34,7 +35,7 @@ public interface UserApi {
     @RequestMapping(value = "/user",
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<Void> createUser(@ApiParam(value = "Created user object" ,required=true )  @Valid @RequestBody User body);
+    ResponseEntity<Void> createUser(@ApiParam(value = "Created user object" ,required=true )  @Valid @RequestBody User body) throws SQLException;
 
 
     @ApiOperation(value = "get a list of all availible users", nickname = "getUserList", notes = "", response = User.class, responseContainer = "List", tags={  })
