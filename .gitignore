@@ -1,4 +1,4 @@
-
+*.db
 
 # Created by https://www.gitignore.io/api/java,linux,macos,latex,python,gradle,windows,eclipse,intellij+all
 # Edit at https://www.gitignore.io/?templates=java,linux,macos,latex,python,gradle,windows,eclipse,intellij+all
