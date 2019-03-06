@@ -46,7 +46,7 @@ public interface UserApi {
     @RequestMapping(value = "/user",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<User>> getUserList(@NotNull @ApiParam(value = "the type of user account to look up", required = true) @Valid @RequestParam(value = "accountType", required = true) AccountType accountType) throws SQLException;
+    ResponseEntity<List<User>> getUserList(@NotNull @ApiParam(value = "the type of user account to look up", required = true) @Valid @RequestParam(value = "accountType", required = true) String accountType) throws SQLException;
 
 
     @ApiOperation(value = "Logs user into the system", nickname = "loginUser", notes = "", response = User.class, tags={  })

@@ -2,6 +2,8 @@ package pw.wp6.avocado_toast.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -11,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 /**
  * Gets or Sets AccountType
  */
-public enum AccountType {
+public enum AccountType implements Converter<String, AccountType> {
   BANKER("banker"),
     CUSTOMER("customer"),
     ANALYSIST("analysist");
@@ -37,4 +39,9 @@ public enum AccountType {
     }
     return null;
   }
-}
+
+  @Autowired
+  @Override
+  public AccountType convert(String source) {
+    return AccountType.fromValue(source);
+  }}

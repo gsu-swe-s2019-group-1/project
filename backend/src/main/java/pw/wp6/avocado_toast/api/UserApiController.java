@@ -1,33 +1,28 @@
 package pw.wp6.avocado_toast.api;
 
-import pw.wp6.avocado_toast.invoker.DatabaseConnection;
-import pw.wp6.avocado_toast.model.AccountType;
-import pw.wp6.avocado_toast.model.CreateUserObject;
-import pw.wp6.avocado_toast.model.LoginParameters;
-import pw.wp6.avocado_toast.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
+import pw.wp6.avocado_toast.invoker.DatabaseConnection;
+import pw.wp6.avocado_toast.model.AccountType;
+import pw.wp6.avocado_toast.model.CreateUserObject;
+import pw.wp6.avocado_toast.model.LoginParameters;
+import pw.wp6.avocado_toast.model.User;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-03-03T23:33:49.816-05:00[America/New_York]")
 @Controller
@@ -48,8 +43,7 @@ public class UserApiController implements UserApi {
     public ResponseEntity<User> createUser(@ApiParam(value = "Created user object", required = true) @Valid @RequestBody CreateUserObject body) throws SQLException {
         String accept = request.getHeader("Accept");
         PreparedStatement addUser = DatabaseConnection.c.prepareStatement(
-                "INSERT INTO user (name, username, password, ssn, accountType) " +
-                        "OUTPUT Inserted.ID " + //  https://stackoverflow.com/a/7917874/2299084
+                "INSERT INTO users (name, username, password, ssn, account_type) " +
                         "VALUES (?, ?, ?, ?, ?);");
 
         addUser.setString(1, body.getName());
@@ -58,11 +52,11 @@ public class UserApiController implements UserApi {
         addUser.setString(4, body.getSsn());
         addUser.setString(5, body.getAccountType().name());
 
-        ResultSet results = addUser.executeQuery();
-        results.first();
+        addUser.executeUpdate();
+        long key = addUser.getGeneratedKeys().getLong(1);
 
         User resultUser = (new User())
-                .id(results.getLong(0))
+                .id(key)
                 .name(body.getName())
                 .username(body.getUsername())
                 .password(body.getPassword())
@@ -72,20 +66,35 @@ public class UserApiController implements UserApi {
         return new ResponseEntity<User>(resultUser, HttpStatus.OK);
     }
 
-    public ResponseEntity<List<User>> getUserList(@NotNull @ApiParam(value = "the type of user account to look up", required = true) @Valid @RequestParam(value = "accountType", required = true) AccountType accountType) throws SQLException {
+    public ResponseEntity<List<User>> getUserList(
+            @NotNull
+            @ApiParam(value = "the type of user account to look up", required = true)
+            @Valid
+            @RequestParam(value = "accountType", required = true)
+                    String accountType) throws SQLException {
         String accept = request.getHeader("Accept");
-        PreparedStatement getUsers = DatabaseConnection.c.prepareStatement(
-                "SELECT *" +
-                        "FROM user" +
-                        "WHERE accountType = " +
-                        "VALUES (?) ");
 
-        getUsers.setString(1, accountType.name());
+        AccountType accountType1 = AccountType.fromValue(accountType);
+        PreparedStatement getUsers = DatabaseConnection.c.prepareStatement(
+                "SELECT id, name, username, ssn, account_type " +
+                        "FROM users " +
+                        "WHERE account_type = ?;");
+
+        getUsers.setString(1, accountType1.name());
 
         ResultSet results = getUsers.executeQuery();
-        results.first();
 
-        return new ResponseEntity<List<User>>(HttpStatus.NOT_IMPLEMENTED);
+        List<User> response = new ArrayList<>();
+        while (results.next()) {
+            response.add(new User()
+                    .id(results.getLong(1))
+                    .name(results.getString(2))
+                    .username(results.getString(3))
+                    .ssn(results.getString(4))
+                    .accountType(AccountType.fromValue(results.getString(5))));
+        }
+
+        return new ResponseEntity<List<User>>(response, HttpStatus.OK);
     }
 
     public ResponseEntity<User> loginUser(@ApiParam(value = "Created user object", required = true) @Valid @RequestBody LoginParameters body) throws SQLException {
