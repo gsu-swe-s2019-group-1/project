@@ -48,9 +48,9 @@ public class UserApiController implements UserApi {
     public ResponseEntity<User> createUser(@ApiParam(value = "Created user object", required = true) @Valid @RequestBody CreateUserObject body) throws SQLException {
         String accept = request.getHeader("Accept");
         PreparedStatement addUser = DatabaseConnection.c.prepareStatement(
-                "INSERT INTO user (name, username, password, ssn, accountType)" +
-                        "OUTPUT Inserted.ID" + //  https://stackoverflow.com/a/7917874/2299084
-                        "VALUES (?, ?, ?, ?, ?) ");
+                "INSERT INTO user (name, username, password, ssn, accountType) " +
+                        "OUTPUT Inserted.ID " + //  https://stackoverflow.com/a/7917874/2299084
+                        "VALUES (?, ?, ?, ?, ?);");
 
         addUser.setString(1, body.getName());
         addUser.setString(2, body.getUsername());
@@ -63,11 +63,11 @@ public class UserApiController implements UserApi {
 
         User resultUser = (new User())
                 .id(results.getLong(0))
-                .name(body.getName()); //etc
-                .username(body.getUsername());
-                .password(body.getPassword());
-                .ssn(body.getSsn());
-                .accountType(body.getAccountType().name());
+                .name(body.getName())
+                .username(body.getUsername())
+                .password(body.getPassword())
+                .ssn(body.getSsn())
+                .accountType(body.getAccountType());
 
         return new ResponseEntity<User>(resultUser, HttpStatus.OK);
     }

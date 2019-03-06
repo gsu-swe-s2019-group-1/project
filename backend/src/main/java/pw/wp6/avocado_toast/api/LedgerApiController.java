@@ -45,13 +45,13 @@ public class LedgerApiController implements LedgerApi {
     public ResponseEntity<LedgerEntry> createUserTransaction(@ApiParam(value = "Created transaction object" ,required=true )  @Valid @RequestBody TransactionInput body,@ApiParam(value = "ID of a valid user",required=true) @PathVariable("userId") Long userId) throws SQLException {
         String accept = request.getHeader("Accept");
         PreparedStatement createUserTrans = DatabaseConnection.c.prepareStatement(
-                "INSERT INTO ledgerEntry (userid, merchant, amount, dateTime)" +
-                        "OUTPUT Inserted.ID" +
-                        "VALUES (?, ?, ?, SELECT GETDATE()) ");
+                "INSERT INTO ledgerEntry (userid, merchant, amount, dateTime) " +
+                        "OUTPUT Inserted.ID " +
+                        "VALUES (?, ?, ?, SELECT GETDATE());");
 
         createUserTrans.setString(1, String.valueOf(userId));
         createUserTrans.setString(2, body.getMerchant());
-        createUserTrans.setLong(3, body.getAmount());
+        createUserTrans.setBigDecimal(3, body.getAmount());
 
         ResultSet results = createUserTrans.executeQuery();
         results.first();
