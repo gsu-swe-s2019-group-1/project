@@ -9,7 +9,8 @@ public class DatabaseConnection {
 
     static {
         try {
-            c = DriverManager.getConnection("jdbc:hsqldb:file:./db", "SA", "");
+            c = DriverManager.getConnection("jdbc:sqlite:file:./db.db");
+            c.prepareCall("CREATE TABLE IF NOT EXISTS").execute();
         } catch (SQLException e) {
             e.printStackTrace();
             c = null;
