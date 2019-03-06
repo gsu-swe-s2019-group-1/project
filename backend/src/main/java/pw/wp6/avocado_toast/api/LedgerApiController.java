@@ -1,10 +1,8 @@
 package pw.wp6.avocado_toast.api;
 
-import pw.wp6.avocado_toast.model.DailyTransactions;
-import pw.wp6.avocado_toast.model.LedgerEntry;
+import pw.wp6.avocado_toast.invoker.DatabaseConnection;
+import pw.wp6.avocado_toast.model.*;
 import org.threeten.bp.LocalDate;
-import pw.wp6.avocado_toast.model.TransactionInput;
-import pw.wp6.avocado_toast.model.UserTransactions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -23,6 +21,9 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-03-04T01:09:12.686-05:00[America/New_York]")
@@ -41,8 +42,20 @@ public class LedgerApiController implements LedgerApi {
         this.request = request;
     }
 
-    public ResponseEntity<LedgerEntry> createUserTransaction(@ApiParam(value = "Created transaction object" ,required=true )  @Valid @RequestBody TransactionInput body,@ApiParam(value = "ID of a valid user",required=true) @PathVariable("userId") Long userId) {
+    public ResponseEntity<LedgerEntry> createUserTransaction(@ApiParam(value = "Created transaction object" ,required=true )  @Valid @RequestBody TransactionInput body,@ApiParam(value = "ID of a valid user",required=true) @PathVariable("userId") Long userId) throws SQLException {
         String accept = request.getHeader("Accept");
+        PreparedStatement createUserTrans = DatabaseConnection.c.prepareStatement(
+                "INSERT INTO ledgerEntry (userid, merchant, amount, dateTime)" +
+                        "OUTPUT Inserted.ID" +
+                        "VALUES (?, ?, ?, SELECT GETDATE()) ");
+
+        createUserTrans.setString(1, String.valueOf(userId));
+        createUserTrans.setString(2, body.getMerchant());
+        createUserTrans.setLong(3, body.getAmount());
+
+        ResultSet results = createUserTrans.executeQuery();
+        results.first();
+
         return new ResponseEntity<LedgerEntry>(HttpStatus.NOT_IMPLEMENTED);
     }
 

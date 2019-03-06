@@ -51,27 +51,58 @@ public class UserApiController implements UserApi {
                 "INSERT INTO user (name, username, password, ssn, accountType)" +
                         "OUTPUT Inserted.ID" + //  https://stackoverflow.com/a/7917874/2299084
                         "VALUES (?, ?, ?, ?, ?) ");
-        addUser.setString(2, body.getName());
-        addUser.setString(3, body.getUsername());
-        addUser.setString(4, body.getPassword());
-        addUser.setString(5, body.getSsn());
-        addUser.setString(6, body.getAccountType().name());
+
+        addUser.setString(1, body.getName());
+        addUser.setString(2, body.getUsername());
+        addUser.setString(3, body.getPassword());
+        addUser.setString(4, body.getSsn());
+        addUser.setString(5, body.getAccountType().name());
+
         ResultSet results = addUser.executeQuery();
         results.first();
 
         User resultUser = (new User())
                 .id(results.getLong(0))
                 .name(body.getName()); //etc
+                .username(body.getUsername());
+                .password(body.getPassword());
+                .ssn(body.getSsn());
+                .accountType(body.getAccountType().name());
+
         return new ResponseEntity<User>(resultUser, HttpStatus.OK);
     }
 
-    public ResponseEntity<List<User>> getUserList(@NotNull @ApiParam(value = "the type of user account to look up", required = true) @Valid @RequestParam(value = "accountType", required = true) AccountType accountType) {
+    public ResponseEntity<List<User>> getUserList(@NotNull @ApiParam(value = "the type of user account to look up", required = true) @Valid @RequestParam(value = "accountType", required = true) AccountType accountType) throws SQLException {
         String accept = request.getHeader("Accept");
+        PreparedStatement getUsers = DatabaseConnection.c.prepareStatement(
+                "SELECT *" +
+                        "FROM user" +
+                        "WHERE accountType = " +
+                        "VALUES (?) ");
+
+        getUsers.setString(1, accountType.name());
+
+        ResultSet results = getUsers.executeQuery();
+        results.first();
+
         return new ResponseEntity<List<User>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<User> loginUser(@ApiParam(value = "Created user object", required = true) @Valid @RequestBody LoginParameters body) {
+    public ResponseEntity<User> loginUser(@ApiParam(value = "Created user object", required = true) @Valid @RequestBody LoginParameters body) throws SQLException {
         String accept = request.getHeader("Accept");
+        PreparedStatement loginUsers = DatabaseConnection.c.prepareStatement(
+                "SELECT *" +
+                        "FROM user" +
+                        "WHERE username = " +
+                        "WHERE password = " +
+                        "VALUES (?, ?) ");
+
+        loginUsers.setString(1, body.getUserName());
+        loginUsers.setString(1, body.getPassword());
+
+        ResultSet results = loginUsers.executeQuery();
+        results.first();
+
         return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
     }
 
