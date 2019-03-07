@@ -48,6 +48,8 @@ public class UserApiController implements UserApi {
 
         addUser.setString(1, body.getName());
         addUser.setString(2, body.getUsername());
+        // adding a password to the database like this is basically the worst thing ever, but
+        // fuck it. Don't reuse passwords between this app and anywhere else.
         addUser.setString(3, body.getPassword());
         addUser.setString(4, body.getSsn());
         addUser.setString(5, body.getAccountType().name());
@@ -100,19 +102,23 @@ public class UserApiController implements UserApi {
     public ResponseEntity<User> loginUser(@ApiParam(value = "Created user object", required = true) @Valid @RequestBody LoginParameters body) throws SQLException {
         String accept = request.getHeader("Accept");
         PreparedStatement loginUsers = DatabaseConnection.c.prepareStatement(
-                "SELECT *" +
-                        "FROM user" +
-                        "WHERE username = " +
-                        "WHERE password = " +
-                        "VALUES (?, ?) ");
+                "SELECT id, name, username, ssn, account_type " +
+                        "FROM users " +
+                        "WHERE username IS ? AND password IS ?;");
 
         loginUsers.setString(1, body.getUserName());
-        loginUsers.setString(1, body.getPassword());
+        loginUsers.setString(2, body.getPassword());
 
         ResultSet results = loginUsers.executeQuery();
-        results.first();
 
-        return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
+        results.next();
+
+        return new ResponseEntity<User>(new User()
+                .id(results.getLong(1))
+                .name(results.getString(2))
+                .username(results.getString(3))
+                .ssn(results.getString(4))
+                .accountType(AccountType.fromValue(results.getString(5))), HttpStatus.OK);
     }
 
 }

@@ -14,24 +14,22 @@ public class DatabaseConnection {
             try (Statement stmt = c.createStatement()) {
                 stmt.execute("CREATE TABLE IF NOT EXISTS users\n" +
                         "(\n" +
-                        "  id          INTEGER PRIMARY KEY,\n" +
-                        "  name        TEXT,\n" +
-                        "  username    TEXT,\n" +
-                        "  password    TEXT,\n" +
-                        "  ssn         TEXT,\n" +
-                        "  account_type TEXT\n" +
+                        "  id           INTEGER PRIMARY KEY,\n" +
+                        "  name         TEXT UNIQUE NOT NULL,\n" +
+                        "  username     TEXT NOT NULL,\n" +
+                        "  password     TEXT NOT NULL,\n" +
+                        "  ssn          TEXT NOT NULL,\n" +
+                        "  account_type TEXT NOT NULL\n" +
                         ");\n" +
                         "CREATE TABLE IF NOT EXISTS ledger_entries\n" +
                         "(\n" +
-                        "  id       INTEGER PRIMARY KEY,\n" +
-                        "  user_id  INTEGER,\n" +
-                        "  FOREIGN KEY(user_id) REFERENCES users(id),\n" +
-                        "  merchant TEXT,\n" +
-                        "  amount   DECIMAL,\n" +
-                        "  date_time DATETIME\n" +
+                        "  id        INTEGER PRIMARY KEY,\n" +
+                        "  user_id   INTEGER NOT NULL,\n" +
+                        "  FOREIGN   KEY(user_id) REFERENCES users(id),\n" +
+                        "  merchant  TEXT NOT NULL,\n" +
+                        "  amount    DECIMAL NOT NULL,\n" +
+                        "  date_time DATETIME NOT NULL\n" +
                         ");");
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
             }
         } catch (SQLException e) {
             e.printStackTrace();
