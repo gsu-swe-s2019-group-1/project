@@ -15,10 +15,14 @@ repositories {
     }
 }
 
-
-
 application {
-	mainClassName = 'pw.wp6.avocado_toast.invoker.Swagger2SpringBoot'
+    mainClassName = 'pw.wp6.avocado_toast.invoker.Swagger2SpringBoot'
+}
+
+sourceSets {
+    test.java.srcDirs 'test/java'
+    main.java.srcDirs 'src/main/java'
+    main.resources.srcDirs 'src/main/resources'
 }
 
 
@@ -48,4 +52,8 @@ publishing {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnit()
 }

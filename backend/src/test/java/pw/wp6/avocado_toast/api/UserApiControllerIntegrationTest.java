@@ -1,6 +1,7 @@
 package pw.wp6.avocado_toast.api;
 
 import pw.wp6.avocado_toast.model.AccountType;
+import pw.wp6.avocado_toast.model.CreateUserObject;
 import pw.wp6.avocado_toast.model.LoginParameters;
 import pw.wp6.avocado_toast.model.User;
 
@@ -25,15 +26,15 @@ public class UserApiControllerIntegrationTest {
 
     @Test
     public void createUserTest() throws Exception {
-        User body = new User();
-        ResponseEntity<Void> responseEntity = api.createUser(body);
+        var body = new CreateUserObject();
+        ResponseEntity<User> responseEntity = api.createUser(body);
         assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
     }
 
     @Test
     public void getUserListTest() throws Exception {
-        AccountType accountType = new AccountType();
-        ResponseEntity<List<User>> responseEntity = api.getUserList(accountType);
+        AccountType accountType = AccountType.ANALYSIST;
+        ResponseEntity<List<User>> responseEntity = api.getUserList(accountType.name());
         assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
     }
 

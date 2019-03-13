@@ -35,7 +35,7 @@ public class LedgerApiControllerIntegrationTest {
 
     @Test
     public void getDayTransactionsTest() throws Exception {
-        LocalDate date = new LocalDate();
+        LocalDate date = LocalDate.of(1990, 1, 1);
         ResponseEntity<DailyTransactions> responseEntity = api.getDayTransactions(date);
         assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
     }
