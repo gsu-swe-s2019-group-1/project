@@ -1,0 +1,12 @@
+[Unit]
+Description=backend API for avocado toast
+After=network.target
+Requires=network.target
+ 
+[Service]
+TimeoutStartSec=5s
+Restart=always
+ExecStart=/srv/swagger-spring-1.0.0/bin/swagger-spring
+
+[Install]
+WantedBy=multi-user.target
