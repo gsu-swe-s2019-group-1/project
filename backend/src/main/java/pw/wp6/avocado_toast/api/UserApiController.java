@@ -99,7 +99,7 @@ public class UserApiController implements UserApi {
         return new ResponseEntity<List<User>>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<User> loginUser(@ApiParam(value = "Created user object", required = true) @Valid @RequestBody LoginParameters body) throws SQLException {
+    public ResponseEntity<User> loginUser(@ApiParam(value = "Created user object", required = true) @Valid @RequestBody LoginParameters body) throws SQLException, ApiException {
         String accept = request.getHeader("Accept");
         PreparedStatement loginUsers = DatabaseConnection.c.prepareStatement(
                 "SELECT id, name, username, ssn, account_type " +
@@ -112,6 +112,10 @@ public class UserApiController implements UserApi {
         ResultSet results = loginUsers.executeQuery();
 
         results.next();
+
+        if (results.isClosed())
+            throw new ApiException(HttpStatus.UNAUTHORIZED.value(),
+                    "Invalid username or password");
 
         return new ResponseEntity<User>(new User()
                 .id(results.getLong(1))

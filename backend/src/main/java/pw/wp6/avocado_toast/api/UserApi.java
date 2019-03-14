@@ -57,6 +57,6 @@ public interface UserApi {
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<User> loginUser(@ApiParam(value = "Created user object" ,required=true )  @Valid @RequestBody LoginParameters body) throws SQLException;
+    ResponseEntity<User> loginUser(@ApiParam(value = "Created user object" ,required=true )  @Valid @RequestBody LoginParameters body) throws SQLException, ApiException;
 
 }
