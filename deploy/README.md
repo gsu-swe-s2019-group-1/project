@@ -23,8 +23,7 @@ swagger-spring-1.0.0 root@avocado-toast.wp6.pw:/srv/`
 This project uses NGINX as the web server. Install it using `sudo apt install
 nginx`.
 
-Copy `default-site` into `/etc/nginx/sites-enabled/`, replacing the existing
-file.
+Copy `default` into `/etc/nginx/sites-enabled/`, replacing the existing file.
 
 ### Service
 

@@ -23,7 +23,7 @@ server {
 
 
     location /api/ {
-        proxy_pass http://localhost:8000/;
+        proxy_pass http://localhost:8000/api/;
     }
     location /apidoc/ {
         proxy_pass http://localhost:8080/;
