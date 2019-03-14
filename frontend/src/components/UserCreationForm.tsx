@@ -67,8 +67,8 @@ const UserCreationInner: FC<FormComponentProps> = ({ form }) => {
                         )}
                     </Form.Item>
                     <Form.Item>
-                        {getFieldDecorator('permissions', {
-                            rules: [{ required: true, message: 'Please assign the user a set of permissions' },],
+                        {getFieldDecorator('accountType', {
+                            rules: [{ required: true, message: 'Please assign the user permissions' },],
                         })(
                             <Select style={{ color: 'rgba(0,0,0,.25)' }} placeholder="Account type">
                                 {Object.keys(AccountType)

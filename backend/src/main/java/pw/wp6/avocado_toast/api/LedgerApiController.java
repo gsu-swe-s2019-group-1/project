@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-03-04T01:09:12.686-05:00[America/New_York]")
 @Controller
 public class LedgerApiController implements LedgerApi {
@@ -42,29 +43,32 @@ public class LedgerApiController implements LedgerApi {
         this.request = request;
     }
 
-    public ResponseEntity<LedgerEntry> createUserTransaction(@ApiParam(value = "Created transaction object" ,required=true )  @Valid @RequestBody TransactionInput body,@ApiParam(value = "ID of a valid user",required=true) @PathVariable("userId") Long userId) throws SQLException {
+    public ResponseEntity<LedgerEntry> createUserTransaction(@ApiParam(value = "Created transaction object", required = true) @Valid @RequestBody TransactionInput body, @ApiParam(value = "ID of a valid user", required = true) @PathVariable("userId") Long userId) throws SQLException {
         String accept = request.getHeader("Accept");
         PreparedStatement createUserTrans = DatabaseConnection.c.prepareStatement(
-                "INSERT INTO ledgerEntry (userid, merchant, amount, dateTime) " +
-                        "OUTPUT Inserted.ID " +
-                        "VALUES (?, ?, ?, SELECT GETDATE());");
+                "INSERT INTO ledger_entries (user_id, merchant, amount, date_time)\n" +
+                        "VALUES (?, ?, ?, CURRENT_TIME);");
 
-        createUserTrans.setString(1, String.valueOf(userId));
+        createUserTrans.setLong(1, userId);
         createUserTrans.setString(2, body.getMerchant());
         createUserTrans.setBigDecimal(3, body.getAmount());
 
-        ResultSet results = createUserTrans.executeQuery();
-        results.first();
+        createUserTrans.executeUpdate();
+        long key = createUserTrans.getGeneratedKeys().getLong(1);
 
-        return new ResponseEntity<LedgerEntry>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<LedgerEntry>(new LedgerEntry()
+                .id(key)
+                .userId(userId)
+                .amount(body.getAmount())
+                .merchant(body.getMerchant()), HttpStatus.OK);
     }
 
-    public ResponseEntity<DailyTransactions> getDayTransactions(@ApiParam(value = "Day to get transactions for",required=true) @PathVariable("date") LocalDate date) {
+    public ResponseEntity<DailyTransactions> getDayTransactions(@ApiParam(value = "Day to get transactions for", required = true) @PathVariable("date") LocalDate date) {
         String accept = request.getHeader("Accept");
         return new ResponseEntity<DailyTransactions>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<UserTransactions> getUserTransactions(@ApiParam(value = "ID of a valid user",required=true) @PathVariable("userId") Long userId) {
+    public ResponseEntity<UserTransactions> getUserTransactions(@ApiParam(value = "ID of a valid user", required = true) @PathVariable("userId") Long userId) {
         String accept = request.getHeader("Accept");
         return new ResponseEntity<UserTransactions>(HttpStatus.NOT_IMPLEMENTED);
     }
