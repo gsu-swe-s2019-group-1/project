@@ -21,7 +21,7 @@ export class Client {
      * @param body Created user object
      * @return successful operation
      */
-    createUser(body: User): Promise<void> {
+    createUser(body: Body): Promise<User> {
         let url_ = this.baseUrl + "/user";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -32,6 +32,7 @@ export class Client {
             method: "POST",
             headers: {
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             }
         };
 
@@ -40,14 +41,22 @@ export class Client {
         });
     }
 
-    protected processCreateUser(response: Response): Promise<void> {
+    protected processCreateUser(response: Response): Promise<User> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        {
+        if (status === 200) {
             return response.text().then((_responseText) => {
-            return;
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? User.fromJS(resultData200) : new User();
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
+        return Promise.resolve<User>(<any>null);
     }
 
     /**
@@ -102,7 +111,7 @@ export class Client {
      * @param body Created user object
      * @return successful operation
      */
-    loginUser(body: Body): Promise<User> {
+    loginUser(body: Body2): Promise<User> {
         let url_ = this.baseUrl + "/user/login";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -150,7 +159,7 @@ export class Client {
      * @param body Created transaction object
      * @return Transaction successfully submitted
      */
-    createUserTransaction(userId: number, body: Body2): Promise<LedgerEntry> {
+    createUserTransaction(userId: number, body: Body3): Promise<LedgerEntry> {
         let url_ = this.baseUrl + "/ledger/by-user/{userId}";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined.");
@@ -390,11 +399,63 @@ export interface IUser {
 }
 
 export class Body implements IBody {
+    name!: string;
+    username!: string;
+    password?: string;
+    ssn!: string;
+    accountType!: AccountType;
+
+    constructor(data?: IBody) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.username = data["username"];
+            this.password = data["password"];
+            this.ssn = data["ssn"];
+            this.accountType = data["accountType"];
+        }
+    }
+
+    static fromJS(data: any): Body {
+        data = typeof data === 'object' ? data : {};
+        let result = new Body();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["username"] = this.username;
+        data["password"] = this.password;
+        data["ssn"] = this.ssn;
+        data["accountType"] = this.accountType;
+        return data; 
+    }
+}
+
+export interface IBody {
+    name: string;
+    username: string;
+    password?: string;
+    ssn: string;
+    accountType: AccountType;
+}
+
+export class Body2 implements IBody2 {
     /** The password for login in clear text */
     password!: string;
     userName?: string;
 
-    constructor(data?: IBody) {
+    constructor(data?: IBody2) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -410,9 +471,9 @@ export class Body implements IBody {
         }
     }
 
-    static fromJS(data: any): Body {
+    static fromJS(data: any): Body2 {
         data = typeof data === 'object' ? data : {};
-        let result = new Body();
+        let result = new Body2();
         result.init(data);
         return result;
     }
@@ -425,17 +486,17 @@ export class Body implements IBody {
     }
 }
 
-export interface IBody {
+export interface IBody2 {
     /** The password for login in clear text */
     password: string;
     userName?: string;
 }
 
-export class Body2 implements IBody2 {
+export class Body3 implements IBody3 {
     merchant!: string;
     amount!: number;
 
-    constructor(data?: IBody2) {
+    constructor(data?: IBody3) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -451,9 +512,9 @@ export class Body2 implements IBody2 {
         }
     }
 
-    static fromJS(data: any): Body2 {
+    static fromJS(data: any): Body3 {
         data = typeof data === 'object' ? data : {};
-        let result = new Body2();
+        let result = new Body3();
         result.init(data);
         return result;
     }
@@ -466,7 +527,7 @@ export class Body2 implements IBody2 {
     }
 }
 
-export interface IBody2 {
+export interface IBody3 {
     merchant: string;
     amount: number;
 }

@@ -1,4 +1,4 @@
-import { Client, Body2, IUser } from "../models/api";
+import { Client, IUser, Body3 } from "../models/api";
 import React, { useState, useCallback, FC } from "react";
 import { Form, Icon, Input, Button, Drawer, } from "antd";
 import { FormComponentProps } from "antd/lib/form";
@@ -38,7 +38,7 @@ const MoneyTransferInner: FC<MoneyTransferFormProps & FormComponentProps> = ({
         form.validateFields((err, values) => {
             if (!err) {
                 onClose()
-                client.createUserTransaction(user.id, new Body2({
+                client.createUserTransaction(user.id, new Body3({
                     merchant: values.merchant,
                     amount: values.amount,
                 })).then((transaction) => {
