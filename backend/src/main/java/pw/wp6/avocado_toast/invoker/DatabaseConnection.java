@@ -1,5 +1,7 @@
 package pw.wp6.avocado_toast.invoker;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,7 +12,12 @@ public class DatabaseConnection {
 
     static {
         try {
-            c = DriverManager.getConnection("jdbc:sqlite:file:./db.db");
+            String dbPath = "./db.db";  // local dir during dev
+            if (InetAddress.getLocalHost().getHostName().equals("avocado-toast")) {
+                // another path during deploy
+                dbPath = "/var/db/db.db";
+            }
+            c = DriverManager.getConnection("jdbc:sqlite:file:" + dbPath);
             try (Statement stmt = c.createStatement()) {
                 stmt.execute("CREATE TABLE IF NOT EXISTS users\n" +
                         "(\n" +
@@ -31,12 +38,12 @@ public class DatabaseConnection {
                         "  date_time DATETIME NOT NULL\n" +
                         ");");
             }
-        } catch (SQLException e) {
+        } catch (SQLException | UnknownHostException e) {
             e.printStackTrace();
             c = null;
         }
     }
 
-    public DatabaseConnection() throws SQLException {
+    private DatabaseConnection() {
     }
 }

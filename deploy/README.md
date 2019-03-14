@@ -10,6 +10,13 @@ root@192.34.57.132:/var/www/html`
 swagger-spring-1.0.0.tar`. Copy the contents to the server using `scp -Cr
 swagger-spring-1.0.0 root@avocado-toast.wp6.pw:/srv/`
 
+### Database
+
+```console
+# mkdir /var/db
+# chown -R www-data:www-data /var/db
+```
+
 ### Service
 
 1. Place `backend.service` in `/etc/systemd/system/`.

@@ -7,6 +7,7 @@ Requires=network.target
 TimeoutStartSec=5s
 Restart=always
 ExecStart=/srv/swagger-spring-1.0.0/bin/swagger-spring
+User=www-data
 
 [Install]
 WantedBy=multi-user.target
