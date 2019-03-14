@@ -37,6 +37,9 @@ public class DatabaseConnection {
                         "  amount    DECIMAL NOT NULL,\n" +
                         "  date_time DATETIME NOT NULL\n" +
                         ");");
+                stmt.executeUpdate(
+                        "INSERT INTO users (id, name, username, password, ssn, account_type)\n" +
+                                "VALUES (0, 'Admin', 'admin', 'admin', '000-00-0000', 'banker');");
             }
         } catch (SQLException | UnknownHostException e) {
             e.printStackTrace();
