@@ -1,5 +1,6 @@
 package pw.wp6.avocado_toast.model;
 
+import java.sql.Date;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -113,7 +114,7 @@ public class LedgerEntry   {
     this.amount = amount;
   }
 
-  public LedgerEntry dateTime(OffsetDateTime dateTime) {
+  public LedgerEntry dateTime(Date dateTime) {
     this.dateTime = dateTime;
     return this;
   }
