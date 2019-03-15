@@ -104,6 +104,7 @@ public class LedgerApiController implements LedgerApi {
                     .amount(results.getBigDecimal(3))
                     .merchant(results.getString(4))
                     .dateTime(results.getDate(5)));
+        }
 
         return new ResponseEntity<UserTransactions>(response, HttpStatus.OK);
     }
