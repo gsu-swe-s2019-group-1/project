@@ -36,7 +36,7 @@ public class CustomInstantDeserializer<T extends Temporal>
             null
     );
 
-    public static final JsonDeserializer<LocalDate> LOCAL_DATE = new CustomInstantDeserializer<>(
+    public static final CustomInstantDeserializer<LocalDate> LOCAL_DATE = new CustomInstantDeserializer<>(
             LocalDate.class, DateTimeFormatter.ISO_DATE,
             LocalDate::from,
             a -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId).toLocalDate(),

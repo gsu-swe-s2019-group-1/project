@@ -6,11 +6,13 @@
 package pw.wp6.avocado_toast.api;
 
 import io.swagger.annotations.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.threeten.bp.LocalDate;
 import pw.wp6.avocado_toast.model.DailyTransactions;
 import pw.wp6.avocado_toast.model.LedgerEntry;
 import pw.wp6.avocado_toast.model.TransactionInput;
@@ -18,7 +20,6 @@ import pw.wp6.avocado_toast.model.UserTransactions;
 
 import javax.validation.Valid;
 import java.sql.SQLException;
-import java.time.LocalDate;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-03-04T01:09:12.686-05:00[America/New_York]")
 @Api(value = "ledger", description = "the ledger API")
@@ -41,7 +42,7 @@ public interface LedgerApi {
     @RequestMapping(value = "/ledger/by-date/{date}",
             produces = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<DailyTransactions> getDayTransactions(@ApiParam(value = "Day to get transactions for", required = true) @PathVariable("date") LocalDate date) throws SQLException;
+    ResponseEntity<DailyTransactions> getDayTransactions(@ApiParam(value = "Day to get transactions for", required = true) @PathVariable("date") String date) throws SQLException;
 
 
     @ApiOperation(value = "Gets a list of transactions & an overall balance for a user", nickname = "getUserTransactions", notes = "", response = UserTransactions.class, tags = {})

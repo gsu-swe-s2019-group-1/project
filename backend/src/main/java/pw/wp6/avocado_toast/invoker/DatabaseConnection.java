@@ -39,7 +39,7 @@ public class DatabaseConnection {
                         ");");
                 stmt.executeUpdate(
                         "INSERT OR IGNORE INTO users (id, name, username, password, ssn, account_type)\n" +
-                                "VALUES (0, 'Admin', 'admin', 'admin', '000-00-0000', 'banker');");
+                                "VALUES (0, 'Admin', 'admin', 'admin', '000-00-0000', 'BANKER');");
             }
         } catch (SQLException | UnknownHostException e) {
             e.printStackTrace();
