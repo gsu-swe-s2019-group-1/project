@@ -26,6 +26,11 @@ public class DailyTransactions   {
   @Valid
   private List<LedgerEntry> transactions = null;
 
+  public DailyTransactions() {
+    this.cashFlow = BigDecimal.ZERO;
+    this.transactions = new ArrayList<>();
+  }
+
   public DailyTransactions cashFlow(BigDecimal cashFlow) {
     this.cashFlow = cashFlow;
     return this;

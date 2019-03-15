@@ -89,10 +89,11 @@ public class LedgerApiController implements LedgerApi {
                         "GROUP BY date;");
         getVolume.setString(1, date);
         ResultSet volume = getVolume.executeQuery();
-        volume.next();
 
-        DailyTransactions response = new DailyTransactions()
-                .cashFlow(volume.getBigDecimal(2));
+        DailyTransactions response = new DailyTransactions();
+        if (volume.next()) {
+            response.cashFlow(volume.getBigDecimal(2));
+        }
         while (transactions.next()) {
             response.addTransactionsItem(new LedgerEntry()
                     .id(transactions.getLong(1))
