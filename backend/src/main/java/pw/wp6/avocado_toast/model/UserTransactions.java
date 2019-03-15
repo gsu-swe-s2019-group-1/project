@@ -26,6 +26,11 @@ public class UserTransactions   {
   @Valid
   private List<LedgerEntry> transactions = null;
 
+  public UserTransactions() {
+    this.balance = BigDecimal.ZERO;
+    this.transactions = new ArrayList<>();
+  }
+
   public UserTransactions balance(BigDecimal balance) {
     this.balance = balance;
     return this;

@@ -124,9 +124,12 @@ public class LedgerApiController implements LedgerApi {
                         "WHERE user_id = ?;");
         getBalance.setLong(1, userId);
         ResultSet balance = getBalance.executeQuery();
+        balance.next();
 
-        UserTransactions response = new UserTransactions()
-                .balance(balance.getBigDecimal(1));
+        UserTransactions response = new UserTransactions();
+        if (balance.getBigDecimal(1) != null) {
+            response.balance(balance.getBigDecimal(1));
+        }
         while (results.next()) {
             response.addTransactionsItem(new LedgerEntry()
                     .id(results.getLong(1))
