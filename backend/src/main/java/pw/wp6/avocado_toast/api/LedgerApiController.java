@@ -87,8 +87,25 @@ public class LedgerApiController implements LedgerApi {
     public ResponseEntity<UserTransactions> getUserTransactions(@ApiParam(value = "ID of a valid user", required = true) @PathVariable("userId") Long userId) throws SQLException {
         String accept = request.getHeader("Accept");
 
+        PreparedStatement getUserTrans = DatabaseConnection.c.prepareStatement(
+                "SELECT id, userId, amount, merchant " +
+                        "FROM ledger_entries" +
+                        "WHERE userId = ?;");
 
-        return new ResponseEntity<UserTransactions>(HttpStatus.NOT_IMPLEMENTED);
+        getUserTrans.setLong(1, userId);
+
+        ResultSet results = getUserTrans.executeQuery();
+
+        List<LedgerEntry> response = new ArrayList<>();
+        while (results.next()) {
+            response.add(new LedgerEntry()
+                    .id(results.getLong(1))
+                    .userId(results.getLong(2))
+                    .amount(results.getBigDecimal(3))
+                    .merchant(results.getString(4))
+                    .dateTime(results.getDate(5)));
+
+        return new ResponseEntity<UserTransactions>(response, HttpStatus.OK);
     }
 
 }
