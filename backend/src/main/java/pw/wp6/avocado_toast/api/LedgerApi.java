@@ -48,7 +48,7 @@ public interface LedgerApi {
     @RequestMapping(value = "/ledger/by-date/{date}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<DailyTransactions> getDayTransactions(@ApiParam(value = "Day to get transactions for",required=true) @PathVariable("date") LocalDate date);
+    ResponseEntity<DailyTransactions> getDayTransactions(@ApiParam(value = "Day to get transactions for",required=true) @PathVariable("date") LocalDate date) throws SQLException;
 
 
     @ApiOperation(value = "Gets a list of transactions & an overall balance for a user", nickname = "getUserTransactions", notes = "", response = UserTransactions.class, tags={  })
@@ -57,6 +57,6 @@ public interface LedgerApi {
     @RequestMapping(value = "/ledger/by-user/{userId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<UserTransactions> getUserTransactions(@ApiParam(value = "ID of a valid user",required=true) @PathVariable("userId") Long userId);
+    ResponseEntity<UserTransactions> getUserTransactions(@ApiParam(value = "ID of a valid user",required=true) @PathVariable("userId") Long userId) throws SQLException;
 
 }

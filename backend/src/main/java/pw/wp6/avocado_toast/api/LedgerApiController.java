@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,13 +64,31 @@ public class LedgerApiController implements LedgerApi {
                 .merchant(body.getMerchant()), HttpStatus.OK);
     }
 
-    public ResponseEntity<DailyTransactions> getDayTransactions(@ApiParam(value = "Day to get transactions for", required = true) @PathVariable("date") LocalDate date) {
+    public ResponseEntity<DailyTransactions> getDayTransactions(@ApiParam(value = "Day to get transactions for", required = true) @PathVariable("date") LocalDate date) throws SQLException {
         String accept = request.getHeader("Accept");
-        return new ResponseEntity<DailyTransactions>(HttpStatus.NOT_IMPLEMENTED);
+        PreparedStatement getDayTrans = DatabaseConnection.c.prepareStatement(
+                "SELECT id, userId, amount, merchant " +
+                        "FROM ledger_entries;");
+        ResultSet results = getDayTrans.executeQuery();
+
+        List<LedgerEntry> response = new ArrayList<>();
+        while (results.next()) {
+            response.add(new LedgerEntry()
+                    .id(results.getLong(1))
+                    .userId(results.getLong(2))
+                    .amount(results.getBigDecimal(3))
+                    .merchant(results.getString(4)));
+                    .date_time(results.getDate(5)));
+
+        }
+
+        return new ResponseEntity<DailyTransactions>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<UserTransactions> getUserTransactions(@ApiParam(value = "ID of a valid user", required = true) @PathVariable("userId") Long userId) {
+    public ResponseEntity<UserTransactions> getUserTransactions(@ApiParam(value = "ID of a valid user", required = true) @PathVariable("userId") Long userId) throws SQLException {
         String accept = request.getHeader("Accept");
+
+
         return new ResponseEntity<UserTransactions>(HttpStatus.NOT_IMPLEMENTED);
     }
 
