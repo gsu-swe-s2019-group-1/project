@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.threeten.bp.Instant;
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.ZonedDateTime;
 
@@ -18,6 +19,7 @@ public class JacksonConfiguration {
     module.addDeserializer(Instant.class, CustomInstantDeserializer.INSTANT);
     module.addDeserializer(OffsetDateTime.class, CustomInstantDeserializer.OFFSET_DATE_TIME);
     module.addDeserializer(ZonedDateTime.class, CustomInstantDeserializer.ZONED_DATE_TIME);
+    module.addDeserializer(LocalDate.class, CustomInstantDeserializer.LOCAL_DATE);
     return module;
   }
 }
