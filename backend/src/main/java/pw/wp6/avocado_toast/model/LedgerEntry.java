@@ -1,16 +1,14 @@
 package pw.wp6.avocado_toast.model;
 
-import java.sql.Date;
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.math.BigDecimal;
-import org.threeten.bp.OffsetDateTime;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.Objects;
 
 /**
  * LedgerEntry
@@ -114,7 +112,7 @@ public class LedgerEntry   {
     this.amount = amount;
   }
 
-  public LedgerEntry dateTime(Date dateTime) {
+  public LedgerEntry dateTime(OffsetDateTime dateTime) {
     this.dateTime = dateTime;
     return this;
   }
