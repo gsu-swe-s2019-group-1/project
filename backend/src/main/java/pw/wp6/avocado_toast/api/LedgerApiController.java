@@ -111,15 +111,22 @@ public class LedgerApiController implements LedgerApi {
         String accept = request.getHeader("Accept");
 
         PreparedStatement getUserTrans = DatabaseConnection.c.prepareStatement(
-                "SELECT id, user_id, amount, merchant, date_time " +
-                        "FROM ledger_entries " +
-                        "WHERE userId = ?;");
-
+                "SELECT id, user_id, amount, merchant, date_time\n" +
+                        "FROM ledger_entries\n" +
+                        "WHERE user_id = ?;");
         getUserTrans.setLong(1, userId);
-
         ResultSet results = getUserTrans.executeQuery();
 
-        UserTransactions response = new UserTransactions();
+
+        PreparedStatement getBalance = DatabaseConnection.c.prepareStatement(
+                "SELECT SUM(amount) balance\n" +
+                        "FROM ledger_entries\n" +
+                        "WHERE user_id = ?;");
+        getBalance.setLong(1, userId);
+        ResultSet balance = getBalance.executeQuery();
+
+        UserTransactions response = new UserTransactions()
+                .balance(balance.getBigDecimal(1));
         while (results.next()) {
             response.addTransactionsItem(new LedgerEntry()
                     .id(results.getLong(1))
