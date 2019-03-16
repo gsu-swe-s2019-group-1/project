@@ -88,19 +88,11 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
         if (this.state.user == null) {
             return <Skeleton active />
         }
-        return <UserPage user={this.state.user} canDeposit={false}/>
+        return <UserPage user={this.state.user} canDeposit={false} />
     }
 
     render() {
         const path = this.props.location.pathname
-
-        if (this.state.user == null && path != '/login') {
-            return <Redirect to={'/login'} />
-        }
-        if (this.state.user != null && path == '/login') {
-            return <Redirect to={'/transactions'} />
-        }
-
         const routes: AppRoute[] = [
             {
                 to: '/login', label: 'Login',
@@ -109,7 +101,7 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
             },
             {
                 to: '/transactions', label: 'Transactions',
-                showMenuIf: (path, user) => user != null,
+                showMenuIf: (path, user) => user != null && user.accountType == AccountType.Customer,
                 component: this.BoundTransactionList,
                 exact: true,
             },
@@ -124,12 +116,12 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
             },
             {
                 to: '/customers', label: 'Customers',
-                showMenuIf: (path, user) => user != null,
+                showMenuIf: (path, user) => user != null && user.accountType == AccountType.Banker,
                 component: CustomerListPage,
             },
             {
                 to: '/analysis', label: 'Daily analysis',
-                showMenuIf: (path, user) => user != null,
+                showMenuIf: (path, user) => user != null && user.accountType == AccountType.Analysist,
                 component: AnalysisPage,
             },
             {
@@ -138,6 +130,13 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
                 component: this.BoundLogoutPage,
             },
         ]
+
+        if (this.state.user == null && path != '/login') {
+            return <Redirect to={'/login'} />
+        }
+        if (this.state.user != null && path == '/login') {
+            return <Redirect to={routes.filter(route => route.showMenuIf(path, this.state.user))[0].to} />
+        }
 
         return (
             <Layout style={{ minHeight: '100vh' }}>

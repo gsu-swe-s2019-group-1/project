@@ -40,7 +40,7 @@ const MoneyTransferInner: FC<MoneyTransferFormProps & FormComponentProps> = ({
                 onClose()
                 client.createUserTransaction(user.id, new Body3({
                     merchant: values.merchant,
-                    amount: values.amount,
+                    amount: canDeposit ? values.amount : -values.amount,
                 })).then((transaction) => {
                     alertContext.addAlert({
                         message: `Successfully sent \$${transaction.amount} to ${transaction.merchant}`
@@ -87,7 +87,7 @@ const MoneyTransferInner: FC<MoneyTransferFormProps & FormComponentProps> = ({
                                 message: 'Please add an amount to transfer'
                             }, {
                                 validator: (rule, value, callback) =>
-                                    callback(value <= balance ? [] : ["You can't transfer more money than you have"]),
+                                    callback((balance + (canDeposit ? value : -value) >= 0) ? [] : ["You can't transfer more money than you have"]),
                             }, {
                                 validator: (rule, value, callback) =>
                                     callback(canDeposit || value > 0.01 ? [] : ["You can only transfer money out of your account"]),

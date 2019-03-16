@@ -8,21 +8,25 @@ import { AlertContext } from "./TopLevel";
 const client = new Client()
 
 export const CustomerListPage: FC = () => {
-    const [customers, setCustomers] = useState<(IUser & { balance: number })[]>([])
+    const [customers, setCustomers] = useState<IUser[]>([])
     const alertContext = React.useContext(AlertContext)
+    const [customersAndBalance, setCustomersAndBalance] = useState<(IUser & { balance: number })[]>([])
+
 
     useEffect(() => {
         client.getUserList(AccountType.Customer).then(
             (data: User[]) => {
-                setCustomers(data.map(customer =>
-                    ({ ...customer, balance: 0 })))
+                const values = data.map(customer =>
+                    ({ ...customer, balance: 0 }))
+                setCustomersAndBalance(values)
+                setCustomers(values)
             })
     }, [setCustomers, alertContext])
 
     useEffect(() => {
         customers.forEach((user) => {
             client.getUserTransactions(user.id).then((transactions) => {
-                setCustomers(customers.map(customer => {
+                setCustomersAndBalance(customersAndBalance.map(customer => {
                     if (customer.id != user.id) {
                         return customer
                     }
@@ -36,7 +40,7 @@ export const CustomerListPage: FC = () => {
     return (
         <React.Fragment>
             <Row><UserCreationForm /></Row>
-            <UserTable users={customers} />
+            <UserTable users={customersAndBalance} />
         </React.Fragment>
     )
 }
