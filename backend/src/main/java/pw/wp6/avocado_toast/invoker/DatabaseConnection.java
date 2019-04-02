@@ -1,5 +1,7 @@
 package pw.wp6.avocado_toast.invoker;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -23,8 +25,8 @@ public class DatabaseConnection {
                 stmt.execute("CREATE TABLE IF NOT EXISTS users\n" +
                         "(\n" +
                         "  id           INTEGER PRIMARY KEY,\n" +
-                        "  name         TEXT UNIQUE NOT NULL,\n" +
-                        "  username     TEXT NOT NULL,\n" +
+                        "  name         TEXT NOT NULL,\n" +
+                        "  username     TEXT UNIQUE NOT NULL,\n" +
                         "  password     TEXT NOT NULL,\n" +
                         "  ssn          TEXT NOT NULL,\n" +
                         "  account_type TEXT NOT NULL\n" +
@@ -39,7 +41,9 @@ public class DatabaseConnection {
                         ");");
                 stmt.executeUpdate(
                         "INSERT OR IGNORE INTO users (id, name, username, password, ssn, account_type)\n" +
-                                "VALUES (0, 'Admin', 'admin', 'admin', '000-00-0000', 'BANKER');");
+                                "VALUES (0, 'Admin', 'admin', '" +
+                                new BCryptPasswordEncoder().encode("admin") +
+                                "', '000-00-0000', 'BANKER');");
             }
         } catch (SQLException | UnknownHostException e) {
             e.printStackTrace();

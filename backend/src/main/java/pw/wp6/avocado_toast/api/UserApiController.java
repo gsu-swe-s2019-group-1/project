@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +17,7 @@ import pw.wp6.avocado_toast.model.CreateUserObject;
 import pw.wp6.avocado_toast.model.LoginParameters;
 import pw.wp6.avocado_toast.model.User;
 
+import javax.annotation.Generated;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -24,7 +27,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-03-03T23:33:49.816-05:00[America/New_York]")
+@Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-03-03T23:33:49.816-05:00[America/New_York]")
 @Controller
 public class UserApiController implements UserApi {
 
@@ -34,7 +37,7 @@ public class UserApiController implements UserApi {
 
     private final HttpServletRequest request;
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
     public UserApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
@@ -50,7 +53,7 @@ public class UserApiController implements UserApi {
         addUser.setString(2, body.getUsername());
         // adding a password to the database like this is basically the worst thing ever, but
         // fuck it. Don't reuse passwords between this app and anywhere else.
-        addUser.setString(3, body.getPassword());
+        addUser.setString(3, new BCryptPasswordEncoder().encode(body.getPassword()));
         addUser.setString(4, body.getSsn());
         addUser.setString(5, body.getAccountType().name());
 
@@ -99,15 +102,17 @@ public class UserApiController implements UserApi {
         return new ResponseEntity<List<User>>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<User> loginUser(@ApiParam(value = "Created user object", required = true) @Valid @RequestBody LoginParameters body) throws SQLException, ApiException {
+    public ResponseEntity<User> loginUser(
+            @ApiParam(value = "Created user object", required = true)
+            @Valid @RequestBody LoginParameters body
+    ) throws SQLException, ApiException {
         String accept = request.getHeader("Accept");
         PreparedStatement loginUsers = DatabaseConnection.c.prepareStatement(
-                "SELECT id, name, username, ssn, account_type " +
+                "SELECT id, name, username, password, ssn, account_type " +
                         "FROM users " +
-                        "WHERE username IS ? AND password IS ?;");
+                        "WHERE username IS ?;");
 
         loginUsers.setString(1, body.getUserName());
-        loginUsers.setString(2, body.getPassword());
 
         ResultSet results = loginUsers.executeQuery();
 
@@ -117,12 +122,18 @@ public class UserApiController implements UserApi {
             throw new ApiException(HttpStatus.UNAUTHORIZED.value(),
                     "Invalid username or password");
 
-        return new ResponseEntity<User>(new User()
-                .id(results.getLong(1))
-                .name(results.getString(2))
-                .username(results.getString(3))
-                .ssn(results.getString(4))
-                .accountType(AccountType.fromValue(results.getString(5))), HttpStatus.OK);
+        String passwordHash = results.getString(4);
+        if (new BCryptPasswordEncoder().matches(body.getPassword(), passwordHash)) {
+            return new ResponseEntity<User>(new User()
+                    .id(results.getLong(1))
+                    .name(results.getString(2))
+                    .username(results.getString(3))
+                    .ssn(results.getString(5))
+                    .accountType(AccountType.fromValue(results.getString(6))), HttpStatus.OK);
+        } else {
+            throw new ApiException(HttpStatus.UNAUTHORIZED.value(),
+                    "Invalid username or password");
+        }
     }
 
 }
