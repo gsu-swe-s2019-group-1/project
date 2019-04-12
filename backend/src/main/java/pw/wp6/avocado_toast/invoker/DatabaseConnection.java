@@ -22,28 +22,46 @@ public class DatabaseConnection {
             c = DriverManager.getConnection("jdbc:sqlite:file:" + dbPath);
             try (Statement stmt = c.createStatement()) {
                 stmt.execute("PRAGMA foreign_keys = 1");
-                stmt.execute("CREATE TABLE IF NOT EXISTS users\n" +
+                stmt.execute("CREATE TABLE IF NOT EXISTS Transactions\n" +
                         "(\n" +
-                        "  id           INTEGER PRIMARY KEY,\n" +
-                        "  name         TEXT NOT NULL,\n" +
-                        "  username     TEXT UNIQUE NOT NULL,\n" +
-                        "  password     TEXT NOT NULL,\n" +
-                        "  ssn          TEXT NOT NULL,\n" +
-                        "  account_type TEXT NOT NULL\n" +
+                        "  id                   INTEGER     PRIMARY KEY,\n" +
+                        "  merchant             TEXT        NOT NULL,\n" +
+                        "  amount               INTEGER     NOT NULL,\n" +
+                        "  date_time            DATETIME    NOT NULL\n" +
                         ");");
-                stmt.execute("CREATE TABLE IF NOT EXISTS ledger_entries\n" +
+                stmt.execute("CREATE TABLE IF NOT EXISTS Banker\n" +
                         "(\n" +
-                        "  id        INTEGER PRIMARY KEY,\n" +
-                        "  user_id   INTEGER  NOT NULL REFERENCES users (id),\n" +
-                        "  merchant  TEXT     NOT NULL,\n" +
-                        "  amount    DECIMAL  NOT NULL,\n" +
-                        "  date_time DATETIME NOT NULL\n" +
+                        "  id                   INTEGER  PRIMARY KEY,\n" +
+                        "  banker_user_id       INTEGER  NOT NULL REFERENCES Transactions (id),\n" +
+                        "  banker_username      TEXT     UNIQUE NOT NULL,\n" +
+                        "  banker_password      TEXT     NOT NULL,\n" +
+                        "  name                 TEXT     NOT NULL,\n" +
+                        "  account_type         TEXT     NOT NULL\n" +
+                        ");");
+                stmt.execute("CREATE TABLE IF NOT EXISTS Analyst\n" +
+                        "(\n" +
+                        "  id                   INTEGER  PRIMARY KEY,\n" +
+                        "  analyst_user_id      INTEGER  NOT NULL REFERENCES Transactions (id),\n" +
+                        "  analyst_username     TEXT     UNIQUE NOT NULL,\n" +
+                        "  analyst_password     TEXT     NOT NULL,\n" +
+                        "  name                 TEXT     NOT NULL,\n" +
+                        "  account_type         TEXT     NOT NULL\n" +
+                        ");");
+                 stmt.execute("CREATE TABLE IF NOT EXISTS Customer\n" +
+                        "(\n" +
+                        "  id                   INTEGER  PRIMARY KEY,\n" +
+                        "  customer_user_id     INTEGER  NOT NULL REFERENCES Transactions (id),\n" +
+                        "  Customer_username    TEXT     UNIQUE NOT NULL,\n" +
+                        "  customer_password    TEXT     NOT NULL,\n" +
+                        "  name                 TEXT     NOT NULL,\n" +
+                        "  balance              INTEGER  NOT NULL,\n" +
+                        "  overdraft            BOOLEAN  NOT NULL,\n" +
+                        "  ssn                  INTEGER  NOT NULL,\n" +
+                        "  account_type         TEXT     NOT NULL\n" +
                         ");");
                 stmt.executeUpdate(
-                        "INSERT OR IGNORE INTO users (id, name, username, password, ssn, account_type)\n" +
-                                "VALUES (0, 'Admin', 'admin', '" +
-                                new BCryptPasswordEncoder().encode("admin") +
-                                "', '000-00-0000', 'BANKER');");
+                        "INSERT OR IGNORE INTO Transactions (id, merchant, amount, date_time)\n" +
+                                "VALUES (0, 'Employee', 0,'2019-01-01 01:00:00'");
             }
         } catch (SQLException | UnknownHostException e) {
             e.printStackTrace();
