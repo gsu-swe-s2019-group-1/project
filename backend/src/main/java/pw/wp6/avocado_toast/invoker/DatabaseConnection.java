@@ -22,16 +22,6 @@ public class DatabaseConnection {
             c = DriverManager.getConnection("jdbc:sqlite:file:" + dbPath);
             try (Statement stmt = c.createStatement()) {
                 stmt.execute("PRAGMA foreign_keys = 1");
-                stmt.execute("CREATE TABLE IF NOT EXISTS Transactions\n" +
-                        "(\n" +
-                        "  id                            INTEGER     PRIMARY KEY,\n" +
-                        "  customer_user_id              INTEGER     NOT NULL REFERENCES Customer (id),\n" +
-                        "  banker_user_id                INTEGER     NOT NULL REFERENCES Banker (id),\n" +
-                        "  analyst_user_id               INTEGER     NOT NULL REFERENCES Analyst (id),\n" +
-                        "  merchant                      TEXT        NOT NULL,\n" +
-                        "  amount                        INTEGER     NOT NULL,\n" +
-                        "  date_time                     DATETIME    NOT NULL\n" +
-                        ");");
                 stmt.execute("CREATE TABLE IF NOT EXISTS Banker\n" +
                         "(\n" +
                         "  id                            INTEGER  PRIMARY KEY,\n" +
@@ -59,10 +49,21 @@ public class DatabaseConnection {
                         "  customer_ssn                  INTEGER  NOT NULL,\n" +
                         "  customer_account_type         TEXT     NOT NULL\n" +
                         ");");
-                
+                stmt.execute("CREATE TABLE IF NOT EXISTS Transactions\n" +
+                        "(\n" +
+                        "  id                            INTEGER     PRIMARY KEY,\n" +
+                        "  customer_user_id              INTEGER     NOT NULL REFERENCES Customer (id),\n" +
+                        "  banker_user_id                INTEGER     NOT NULL REFERENCES Banker (id),\n" +
+                        "  analyst_user_id               INTEGER     NOT NULL REFERENCES Analyst (id),\n" +
+                        "  merchant                      TEXT        NOT NULL,\n" +
+                        "  amount                        INTEGER     NOT NULL,\n" +
+                        "  date_time                     DATETIME    NOT NULL\n" +
+                        ");");
                 stmt.executeUpdate(
-                        "INSERT OR IGNORE INTO Transactions (id, merchant, amount, date_time)\n" +
-                                "VALUES (0, 'Employee', 0,'2019-01-01 01:00:00'");
+                        "INSERT OR IGNORE INTO Banker (id, banker_username, banker_password, banker_name, banker_account_type)\n" +
+                                "VALUES (0, 'Admin',
+                                '" +new BCryptPasswordEncoder().encode("admin") +"'
+                                ', 'admin', 'BANKER');");
             }
         } catch (SQLException | UnknownHostException e) {
             e.printStackTrace();
