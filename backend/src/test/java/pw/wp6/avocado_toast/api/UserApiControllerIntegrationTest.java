@@ -1,6 +1,5 @@
 package pw.wp6.avocado_toast.api;
 
-import pw.wp6.avocado_toast.invoker.Swagger2SpringBoot;
 import pw.wp6.avocado_toast.model.AccountType;
 import pw.wp6.avocado_toast.model.CreateUserObject;
 import pw.wp6.avocado_toast.model.LoginParameters;
@@ -19,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Swagger2SpringBoot.class)
+@SpringBootTest
 public class UserApiControllerIntegrationTest {
 
     @Autowired
@@ -28,20 +27,27 @@ public class UserApiControllerIntegrationTest {
     @Test
     public void createUserTest() throws Exception {
         CreateUserObject body = new CreateUserObject();
+        body.setName("John Doe");
+        body.setUsername("jdoe1");
+        body.setAccountType(AccountType.CUSTOMER);
+        body.setPassword("pass123");
+        body.setSsn("123456");
         ResponseEntity<User> responseEntity = api.createUser(body);
         assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
     }
-
-    @Test
-    public void getUserListTest() throws Exception {
-        AccountType accountType = AccountType.ANALYSIST;
-        ResponseEntity<List<User>> responseEntity = api.getUserList(accountType.name());
-        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
-    }
-
+    /**
+     @Test
+     public void getUserListTest() throws Exception {
+     AccountType accountType = AccountType.ANALYSIST;
+     ResponseEntity<List<User>> responseEntity = api.getUserList(accountType.name());
+     assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
+     }
+     **/
     @Test
     public void loginUserTest() throws Exception {
         LoginParameters body = new LoginParameters();
+        body.setUserName("jdoe1");
+        body.setPassword("pass123");
         ResponseEntity<User> responseEntity = api.loginUser(body);
         assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
     }
