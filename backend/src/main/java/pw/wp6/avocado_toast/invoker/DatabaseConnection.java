@@ -25,29 +25,29 @@ public class DatabaseConnection {
                 stmt.execute("CREATE TABLE IF NOT EXISTS Banker\n" +
                         "(\n" +
                         "  id                            INTEGER  PRIMARY KEY,\n" +
-                        "  banker_username               TEXT     UNIQUE NOT NULL,\n" +
-                        "  banker_password               TEXT     NOT NULL,\n" +
-                        "  banker_name                   TEXT     NOT NULL,\n" +
-                        "  banker_account_type           TEXT     NOT NULL\n" +
+                        "  username               TEXT     UNIQUE NOT NULL,\n" +
+                        "  password               TEXT     NOT NULL,\n" +
+                        "  name                   TEXT     NOT NULL,\n" +
+                        "  account_type           TEXT     NOT NULL\n" +
                         ");");
                 stmt.execute("CREATE TABLE IF NOT EXISTS Analyst\n" +
                         "(\n" +
                         "  id                            INTEGER  PRIMARY KEY,\n" +
-                        "  analyst_username              TEXT     UNIQUE NOT NULL,\n" +
-                        "  analyst_password              TEXT     NOT NULL,\n" +
-                        "  analyst_name                  TEXT     NOT NULL,\n" +
-                        "  analyst_account_type          TEXT     NOT NULL\n" +
+                        "  username                      TEXT     UNIQUE NOT NULL,\n" +
+                        "  password                      TEXT     NOT NULL,\n" +
+                        "  name                          TEXT     NOT NULL,\n" +
+                        "  account_type                  TEXT     NOT NULL\n" +
                         ");");
                  stmt.execute("CREATE TABLE IF NOT EXISTS Customer\n" +
                         "(\n" +
                         "  id                            INTEGER  PRIMARY KEY,\n" +
-                        "  customer_username             TEXT     UNIQUE NOT NULL,\n" +
-                        "  customer_password             TEXT     NOT NULL,\n" +
-                        "  customer_name                 TEXT     NOT NULL,\n" +
-                        "  customer_balance              INTEGER  NOT NULL,\n" +
-                        "  customer_overdraft            BOOLEAN  NOT NULL,\n" +
-                        "  customer_ssn                  INTEGER  NOT NULL,\n" +
-                        "  customer_account_type         TEXT     NOT NULL\n" +
+                        "  username                      TEXT     UNIQUE NOT NULL,\n" +
+                        "  password                      TEXT     NOT NULL,\n" +
+                        "  name                          TEXT     NOT NULL,\n" +
+                        "  balance                       INTEGER  NOT NULL,\n" +
+                        "  overdraft                     BOOLEAN  NOT NULL,\n" +
+                        "  ssn                           INTEGER  NOT NULL,\n" +
+                        "  account_type                  TEXT     NOT NULL\n" +
                         ");");
                 stmt.execute("CREATE TABLE IF NOT EXISTS Transactions\n" +
                         "(\n" +
