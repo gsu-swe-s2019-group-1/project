@@ -21,7 +21,7 @@ public class DatabaseConnection {
             }
             c = DriverManager.getConnection("jdbc:sqlite:file:" + dbPath);
             try (Statement stmt = c.createStatement()) {
-                stmt.execute("PRAGMA foreign_keys = 1");
+                stmt.execute("PRAGMA foreign_keys = 3");
                 stmt.execute("CREATE TABLE IF NOT EXISTS Banker\n" +
                         "(\n" +
                         "  id                            INTEGER  PRIMARY KEY,\n" +
