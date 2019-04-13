@@ -44,8 +44,6 @@ public class DatabaseConnection {
                         "  username                      TEXT     UNIQUE NOT NULL,\n" +
                         "  password                      TEXT     NOT NULL,\n" +
                         "  name                          TEXT     NOT NULL,\n" +
-                        "  balance                       INTEGER  NOT NULL,\n" +
-                        "  overdraft                     BOOLEAN  NOT NULL,\n" +
                         "  ssn                           INTEGER  NOT NULL,\n" +
                         "  account_type                  TEXT     NOT NULL\n" +
                         ");");
@@ -60,7 +58,7 @@ public class DatabaseConnection {
                         "  date_time                     DATETIME    NOT NULL\n" +
                         ");");
                 stmt.executeUpdate(
-                        "INSERT OR IGNORE INTO Banker (id, banker_username, banker_password, banker_name, banker_account_type)\n" +
+                        "INSERT OR IGNORE INTO Banker (id, username, password, name, account_type)\n" +
                                 "VALUES (0, 'Admin',
                                 '" +new BCryptPasswordEncoder().encode("admin") +"'
                                 ', 'admin', 'BANKER');");
