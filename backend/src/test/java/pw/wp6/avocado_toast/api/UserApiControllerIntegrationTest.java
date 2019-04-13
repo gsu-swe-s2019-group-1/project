@@ -1,5 +1,6 @@
 package pw.wp6.avocado_toast.api;
 
+import pw.wp6.avocado_toast.invoker.Swagger2SpringBoot;
 import pw.wp6.avocado_toast.model.AccountType;
 import pw.wp6.avocado_toast.model.CreateUserObject;
 import pw.wp6.avocado_toast.model.LoginParameters;
@@ -18,7 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = Swagger2SpringBoot.class)
 public class UserApiControllerIntegrationTest {
 
     @Autowired
@@ -26,7 +27,7 @@ public class UserApiControllerIntegrationTest {
 
     @Test
     public void createUserTest() throws Exception {
-        var body = new CreateUserObject();
+        CreateUserObject body = new CreateUserObject();
         ResponseEntity<User> responseEntity = api.createUser(body);
         assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
     }

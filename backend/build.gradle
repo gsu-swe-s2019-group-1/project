@@ -41,7 +41,7 @@ dependencies {
 group = 'pw.wp6.avocado_toast'
 version = '1.0.0'
 description = 'swagger-spring'
-sourceCompatibility = '11.0'
+sourceCompatibility = '1.8'
 
 publishing {
     publications {

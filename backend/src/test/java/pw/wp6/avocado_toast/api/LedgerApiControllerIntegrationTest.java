@@ -1,6 +1,7 @@
 package pw.wp6.avocado_toast.api;
 
 import org.threeten.bp.LocalDate;
+import pw.wp6.avocado_toast.invoker.Swagger2SpringBoot;
 import pw.wp6.avocado_toast.model.DailyTransactions;
 import pw.wp6.avocado_toast.model.LedgerEntry;
 import pw.wp6.avocado_toast.model.TransactionInput;
@@ -19,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = Swagger2SpringBoot.class)
 public class LedgerApiControllerIntegrationTest {
 
     @Autowired
@@ -36,7 +37,7 @@ public class LedgerApiControllerIntegrationTest {
     @Test
     public void getDayTransactionsTest() throws Exception {
         LocalDate date = LocalDate.of(1990, 1, 1);
-        ResponseEntity<DailyTransactions> responseEntity = api.getDayTransactions(date);
+        ResponseEntity<DailyTransactions> responseEntity = api.getDayTransactions("2019-01-01");
         assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
     }
 
