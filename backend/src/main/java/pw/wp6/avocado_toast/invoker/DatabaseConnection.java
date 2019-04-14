@@ -51,17 +51,15 @@ public class DatabaseConnection {
                         "(\n" +
                         "  id                            INTEGER     PRIMARY KEY,\n" +
                         "  customer_user_id              INTEGER     NOT NULL REFERENCES Customer (id),\n" +
-                        "  banker_user_id                INTEGER     NOT NULL REFERENCES Banker (id),\n" +
-                        "  analyst_user_id               INTEGER     NOT NULL REFERENCES Analyst (id),\n" +
                         "  merchant                      TEXT        NOT NULL,\n" +
                         "  amount                        INTEGER     NOT NULL,\n" +
-                        "  date_time                     DATETIME    NOT NULL\n" +
+                        "  date_time                     STRING    NOT NULL\n" +
                         ");");
                 stmt.executeUpdate(
                         "INSERT OR IGNORE INTO Banker (id, username, password, name, account_type)\n" +
-                                "VALUES (0, 'Admin',
-                                '" +new BCryptPasswordEncoder().encode("admin") +"'
-                                ', 'admin', 'BANKER');");
+                                "VALUES (0, 'Admin','" + 
+                                new BCryptPasswordEncoder().encode("admin") +
+                                "', 'admin', 'BANKER');");
             }
         } catch (SQLException | UnknownHostException e) {
             e.printStackTrace();
