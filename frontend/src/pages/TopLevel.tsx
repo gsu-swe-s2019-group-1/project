@@ -108,11 +108,16 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
             {
                 to: '/transactions/:userId', label: 'Transactions',
                 showMenuIf: () => false,
-                component: (({ match }: RouteComponentProps<{ userId: string }>) =>
-                    <UserPage user={this.state.users
+                component: (({ match }: RouteComponentProps<{ userId: string }>) => {
+                    const user = this.state.users
                         .filter(user =>
-                            user.id == parseInt(match.params.userId))[0]}
-                        canDeposit={true} />),
+                            user.id == parseInt(match.params.userId))[0]
+                    if (user == null) {
+                        return <Skeleton />
+                    } else {
+                        return <UserPage user={user} canDeposit={true} />
+                    }
+                }),
             },
             {
                 to: '/customers', label: 'Customers',
@@ -121,7 +126,7 @@ class TopLevelInner extends React.Component<React.PropsWithChildren<RouteCompone
             },
             {
                 to: '/analysis', label: 'Daily analysis',
-                showMenuIf: (path, user) => user != null && user.accountType == AccountType.Analysist,
+                showMenuIf: (path, user) => user != null && user.accountType == AccountType.Analyst,
                 component: AnalysisPage,
             },
             {

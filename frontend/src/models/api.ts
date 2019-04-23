@@ -13,7 +13,7 @@ export class Client {
 
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : <any>window;
-        this.baseUrl = baseUrl ? baseUrl : "https://avocado-toast.wp6.pw/api";
+        this.baseUrl = baseUrl ? baseUrl : "http://localhost:3000/api";
     }
 
     /**
@@ -250,7 +250,7 @@ export class Client {
         let url_ = this.baseUrl + "/ledger/by-date/{date}";
         if (date === undefined || date === null)
             throw new Error("The parameter 'date' must be defined.");
-        url_ = url_.replace("{date}", encodeURIComponent(date ? "" + date.toJSON() : "null")); 
+        url_ = url_.replace("{date}", encodeURIComponent(date ? date.toISOString().substring(0,10) : "null")); 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <RequestInit>{
@@ -339,7 +339,7 @@ export interface ILedgerEntry {
 export enum AccountType {
     Banker = "banker", 
     Customer = "customer", 
-    Analysist = "analysist", 
+    Analyst = "analyst", 
 }
 
 export class User implements IUser {
