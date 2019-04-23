@@ -45,7 +45,7 @@ public class LedgerApiController implements LedgerApi {
     public ResponseEntity<LedgerEntry> createUserTransaction(@ApiParam(value = "Created transaction object", required = true) @Valid @RequestBody TransactionInput body, @ApiParam(value = "ID of a valid user", required = true) @PathVariable("userId") Long userId) throws SQLException {
         String accept = request.getHeader("Accept");
         PreparedStatement createUserTrans = DatabaseConnection.c.prepareStatement(
-                "INSERT INTO ledger_entries (user_id, merchant, amount, date_time)\n" +
+                "INSERT INTO transactions (customer_id, merchant, amount, date_time)\n" +
                         "VALUES (?, ?, ?, current_timestamp);");
 
         createUserTrans.setLong(1, userId);
@@ -57,7 +57,7 @@ public class LedgerApiController implements LedgerApi {
 
         PreparedStatement readDate = DatabaseConnection.c.prepareStatement(
                 "SELECT date_time\n" +
-                        "FROM ledger_entries\n" +
+                        "FROM transactions\n" +
                         "WHERE id = ?;");
         readDate.setLong(1, key);
         ResultSet date = readDate.executeQuery();
@@ -76,15 +76,15 @@ public class LedgerApiController implements LedgerApi {
     public ResponseEntity<DailyTransactions> getDayTransactions(@ApiParam(value = "Day to get transactions for", required = true) @PathVariable("date") String date) throws SQLException {
         String accept = request.getHeader("Accept");
         PreparedStatement getDayTrans = DatabaseConnection.c.prepareStatement(
-                "SELECT id, user_id, amount, merchant, date_time\n" +
-                        "FROM ledger_entries\n" +
+                "SELECT id, customer_id, amount, merchant, date_time\n" +
+                        "FROM transactions\n" +
                         "WHERE DATE(date_time) = ?;");
         getDayTrans.setString(1, date);
         ResultSet transactions = getDayTrans.executeQuery();
 
         PreparedStatement getVolume = DatabaseConnection.c.prepareStatement(
                 "SELECT DATE(date_time) date, SUM(ABS(amount)) total_amout\n" +
-                        "FROM ledger_entries\n" +
+                        "FROM transactions\n" +
                         "WHERE date = ?\n" +
                         "GROUP BY date;");
         getVolume.setString(1, date);
@@ -112,17 +112,17 @@ public class LedgerApiController implements LedgerApi {
         String accept = request.getHeader("Accept");
 
         PreparedStatement getUserTrans = DatabaseConnection.c.prepareStatement(
-                "SELECT id, user_id, amount, merchant, date_time\n" +
-                        "FROM ledger_entries\n" +
-                        "WHERE user_id = ?;");
+                "SELECT id, customer_id, amount, merchant, date_time\n" +
+                        "FROM transactions\n" +
+                        "WHERE customer_id = ?;");
         getUserTrans.setLong(1, userId);
         ResultSet results = getUserTrans.executeQuery();
 
 
         PreparedStatement getBalance = DatabaseConnection.c.prepareStatement(
                 "SELECT SUM(amount) balance\n" +
-                        "FROM ledger_entries\n" +
-                        "WHERE user_id = ?;");
+                        "FROM transactions\n" +
+                        "WHERE customer_id = ?;");
         getBalance.setLong(1, userId);
         ResultSet balance = getBalance.executeQuery();
         balance.next();
