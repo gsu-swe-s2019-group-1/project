@@ -21,45 +21,44 @@ public class DatabaseConnection {
             }
             c = DriverManager.getConnection("jdbc:sqlite:file:" + dbPath);
             try (Statement stmt = c.createStatement()) {
-                stmt.execute("PRAGMA foreign_keys = 3");
-                stmt.execute("CREATE TABLE IF NOT EXISTS Banker\n" +
+                stmt.execute("PRAGMA foreign_keys = 1");
+                stmt.execute("CREATE TABLE IF NOT EXISTS banker\n" +
                         "(\n" +
-                        "  id                            INTEGER  PRIMARY KEY,\n" +
-                        "  username               TEXT     UNIQUE NOT NULL,\n" +
-                        "  password               TEXT     NOT NULL,\n" +
-                        "  name                   TEXT     NOT NULL,\n" +
-                        "  account_type           TEXT     NOT NULL\n" +
+                        "  id        INTEGER  PRIMARY KEY,\n" +
+                        "  username  TEXT     UNIQUE NOT NULL,\n" +
+                        "  password  TEXT     NOT NULL,\n" +
+                        "  name      TEXT     NOT NULL,\n" +
+                        "  ssn       INTEGER  NOT NULL\n" +
                         ");");
-                stmt.execute("CREATE TABLE IF NOT EXISTS Analyst\n" +
+                stmt.execute("CREATE TABLE IF NOT EXISTS analyst\n" +
                         "(\n" +
-                        "  id                            INTEGER  PRIMARY KEY,\n" +
-                        "  username                      TEXT     UNIQUE NOT NULL,\n" +
-                        "  password                      TEXT     NOT NULL,\n" +
-                        "  name                          TEXT     NOT NULL,\n" +
-                        "  account_type                  TEXT     NOT NULL\n" +
+                        "  id        INTEGER  PRIMARY KEY,\n" +
+                        "  username  TEXT     UNIQUE NOT NULL,\n" +
+                        "  password  TEXT     NOT NULL,\n" +
+                        "  name      TEXT     NOT NULL,\n" +
+                        "  ssn       INTEGER  NOT NULL\n" +
                         ");");
-                 stmt.execute("CREATE TABLE IF NOT EXISTS Customer\n" +
+                 stmt.execute("CREATE TABLE IF NOT EXISTS customer\n" +
                         "(\n" +
-                        "  id                            INTEGER  PRIMARY KEY,\n" +
-                        "  username                      TEXT     UNIQUE NOT NULL,\n" +
-                        "  password                      TEXT     NOT NULL,\n" +
-                        "  name                          TEXT     NOT NULL,\n" +
-                        "  ssn                           INTEGER  NOT NULL,\n" +
-                        "  account_type                  TEXT     NOT NULL\n" +
+                        "  id        INTEGER  PRIMARY KEY,\n" +
+                        "  username  TEXT     UNIQUE NOT NULL,\n" +
+                        "  password  TEXT     NOT NULL,\n" +
+                        "  name      TEXT     NOT NULL,\n" +
+                        "  ssn       INTEGER  NOT NULL\n" +
                         ");");
-                stmt.execute("CREATE TABLE IF NOT EXISTS Transactions\n" +
+                stmt.execute("CREATE TABLE IF NOT EXISTS transactions\n" +
                         "(\n" +
-                        "  id                            INTEGER     PRIMARY KEY,\n" +
-                        "  customer_user_id              INTEGER     NOT NULL REFERENCES Customer (id),\n" +
-                        "  merchant                      TEXT        NOT NULL,\n" +
-                        "  amount                        INTEGER     NOT NULL,\n" +
-                        "  date_time                     STRING    NOT NULL\n" +
+                        "  id           INTEGER  PRIMARY KEY,\n" +
+                        "  customer_id  INTEGER  NOT NULL REFERENCES customer(id),\n" +
+                        "  merchant     TEXT     NOT NULL,\n" +
+                        "  amount       INTEGER  NOT NULL,\n" +
+                        "  date_time    TEXT     NOT NULL\n" +
                         ");");
                 stmt.executeUpdate(
-                        "INSERT OR IGNORE INTO Banker (id, username, password, name, account_type)\n" +
+                        "INSERT OR IGNORE INTO banker (id, name, password, username, ssn)\n" +
                                 "VALUES (0, 'Admin','" + 
                                 new BCryptPasswordEncoder().encode("admin") +
-                                "', 'admin', 'BANKER');");
+                                "', 'admin', '000-11-1111');");
             }
         } catch (SQLException | UnknownHostException e) {
             e.printStackTrace();

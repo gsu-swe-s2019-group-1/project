@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public enum AccountType implements Converter<String, AccountType> {
     BANKER("banker"),
     CUSTOMER("customer"),
-    ANALYSIST("analysist");
+    ANALYST("analyst");
 
     private String value;
 
@@ -46,4 +46,9 @@ public enum AccountType implements Converter<String, AccountType> {
     @Override
     public AccountType convert(String source) {
         return AccountType.fromValue(source);
-    }}
+    }
+
+    public String toTableName() {
+        return value;
+    }
+}
